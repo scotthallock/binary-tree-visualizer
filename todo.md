@@ -1,6 +1,7 @@
 # Todo List
 
 1. Generating binary tree from array representation (DONE)
+    - also create the algorithm (create array from binary tree)
 2. Generating DOM elements (SVG elements) from binary tree 
     - Drawings nodes
     - Drawing edges between nodes
