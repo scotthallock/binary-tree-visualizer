@@ -1,0 +1,16 @@
+#display {
+    width: 90em;
+    height: 90em;
+    background-color: lightblue;
+}
+
+.node {
+    stroke: black;
+    stroke-width: 2;
+    fill: pink;
+}
+
+.branch {
+    stroke: black;
+    stroke-width: 2;
+}
