@@ -10,9 +10,9 @@
     fill: pink;
 }
 
-/* .node-value {
+.node-val {
     font-size: 20px;
-} */
+}
 
 .branch {
     stroke: black;
