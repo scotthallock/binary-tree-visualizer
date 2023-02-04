@@ -20,7 +20,6 @@ const buildTreeFromArray = (arr) => {
         const currNode = queue.shift();
         const leftVal = arr.shift();
         const rightVal = arr.shift();
-        console.log({currNode, leftVal, rightVal})
 
         // support both null elements and empty (undefined) elements
         if (leftVal !== null && leftVal !== undefined) {
@@ -81,7 +80,7 @@ const renderTreeGraphic = (root) => {
             nodeClasses += ' no-right';
             drawNewNodeAreaSVG(treeSVG, x, y, x+dx, y+dy, pathID+'r');
         }
-        drawNodeCircleSVG(treeSVG, x, y, nodeClasses);
+        drawNodeCircleSVG(treeSVG, x, y, nodeClasses, pathID);
         drawNodeValueSVG(treeSVG, x, y, node.val);
     }
     centerHorizontally(treeSVG, displaySVG); // center the tree in the display
@@ -90,13 +89,23 @@ const renderTreeGraphic = (root) => {
     d3.selectAll('.new-node-area')
         .on('click', e => {
             insertNodeInTree(e.target.id);
-            console.log('you clicked an insert node area with id ', e.target.id);
+        });
+    d3.selectAll('.node')
+        .on('mouseup', e => {
+            if (e.which === 1) {
+                console.log('You left clicked node with id ', e.target.id);
+            } else if (e.which === 3) {
+                deleteNodeInTree(e.target.id);
+                console.log('right click');
+            }
+            console.log(e.which);
         });
 };
 
-const drawNodeCircleSVG = (svg, x, y, nodeClasses) => {
+const drawNodeCircleSVG = (svg, x, y, nodeClasses, pathID) => {
     svg.append('circle')
         .attr('class', nodeClasses)
+        .attr('id', pathID)
         .attr('r', 20) // fixed 20px radius
         .attr('cx', x)
         .attr('cy', y);
@@ -166,7 +175,62 @@ const insertNodeInTree = (pathID, val = 0) => {
         node.right = new TreeNode(val);
     else throw new Error('Unable to parse pathID.');
 
+    updateTreeArray(binaryTreeRoot);
     renderTreeGraphic(binaryTreeRoot);
+};
+
+const deleteNodeInTree = (pathID) => {
+    let node = binaryTreeRoot;
+    // remove first character 's'
+    pathID = pathID.slice(1);
+
+    while (pathID.length > 1) {
+        if (pathID[0] === 'l')
+            node = node.left;
+        else if (pathID[0] === 'r')
+            node = node.right;
+        else throw new Error('Unable to parse pathID.');
+        pathID = pathID.slice(1);
+    }
+
+    if (pathID[0] === 'l')
+        node.left = null;
+    else if (pathID[0] === 'r')
+        node.right = null;
+    else throw new Error('Unable to parse pathID.');
+
+    updateTreeArray(binaryTreeRoot);
+    renderTreeGraphic(binaryTreeRoot);
+};
+
+const updateTreeArray = (root) => {
+    const arr = [root.val];
+    const queue = [root];
+
+    // BFS algorithm to create array from tree
+    while (queue.length > 0) {
+        const node = queue.shift();
+        if (node.left) {
+            arr.push(node.left.val);
+            queue.push(node.left);
+        } else {
+            arr.push(null);
+        }
+        if (node.right) {
+            arr.push(node.right.val);
+            queue.push(node.right);
+        } else {
+            arr.push(null);
+        }
+    }
+
+    // trim all the extra nulls off the end of the array
+    while (arr[arr.length - 1] === null) {
+        arr.pop();
+    }
+
+    // update input field
+    d3.select('#tree-array').node().value = JSON.stringify(arr);
 };
 
 
@@ -191,9 +255,6 @@ const startApp = () => {
         .attr('id', 'svg-display')
         .append('g')
         .attr('id', 'svg-tree');
-
-    console.log('on creation...')
-    console.log(d3.select('#svg-tree').node().getBoundingClientRect());
 
     // get DOM elements
     const $treeArrayInput = d3.select('#tree-array').node();
