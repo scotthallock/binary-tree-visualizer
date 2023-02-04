@@ -1,4 +1,22 @@
-#display {
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Roboto Mono', monospace;
+}
+
+#form {
+    /* width: 90vw; */
+    background-color:beige;
+    padding: 10px;
+}
+
+#tree-array {
+    width: 500px;
+}
+
+#svg-display {
     background-color: lightblue;
     width: 90vw;
     height: 90vh;
@@ -8,6 +26,10 @@
     stroke: black;
     stroke-width: 2;
     fill: pink;
+}
+
+.node.leaf {
+    fill: lightgreen;
 }
 
 .node-val {

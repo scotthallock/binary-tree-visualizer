@@ -44,16 +44,15 @@ const renderTreeGraphic = (root) => {
 
     const MIN_HORIZ_DIST = 100; // horizontal distance between nodes at max depth
     const yOffset = 100;
-
     const treeDepth = maxDepth(root);
-    console.log({treeDepth}); // 4
 
-    const $display = document.getElementById('display');
-    const $tree = document.getElementById('tree');
+    const displaySVG = d3.select('#svg-display');
+    displaySVG.selectAll('*').remove(); // clear contents
+    displaySVG.append('g')
+        .attr('id', 'svg-tree');
+    const treeSVG = d3.select('#svg-tree');
 
-    const displayRect = $display.getBoundingClientRect();
-    const displayWidth = displayRect.width;
-    const displayHeight = displayRect.height; // unused
+    const displayWidth = displaySVG.node().getBoundingClientRect().width;
 
     // BFS traverse through tree and create SVG elements
     const queue = [[root, 1, displayWidth / 2, yOffset]]; // [node, depth, xPos, yPos]
@@ -64,58 +63,69 @@ const renderTreeGraphic = (root) => {
         const xOffset = (treeDepth - depth) * (MIN_HORIZ_DIST / 2);
 
         if (node.left) {
-            // calculate position of child node
-            const childXPos = xPos - xOffset;
-            const childYPos = yPos + yOffset;
-            // draw branch to left child
-            $tree.appendChild(createBranchSVG(xPos, yPos, childXPos, childYPos));
-            // add left child to queue
-            queue.push([node.left, depth + 1, childXPos, childYPos]);
+            drawNodeBranchSVG(treeSVG, xPos, yPos, xPos - xOffset, yPos + yOffset);
+            queue.push([
+                node.left,
+                depth + 1,
+                xPos - xOffset,
+                yPos + yOffset
+            ]);
         }
         if (node.right) {
-            // calculate position of child node
-            const childXPos = xPos + xOffset;
-            const childYPos = yPos + yOffset;
-            // draw branch to left child
-            $tree.appendChild(createBranchSVG(xPos, yPos, childXPos, childYPos));
-            // add left child to queue
-            queue.push([node.right, depth + 1, childXPos, childYPos]);
+            drawNodeBranchSVG(treeSVG, xPos, yPos, xPos + xOffset, yPos + yOffset);
+            queue.push([
+                node.right,
+                depth + 1,
+                xPos + xOffset, 
+                yPos + yOffset
+            ]);
         }
-
-        // draw node circle
-        $tree.appendChild(createNodeSVG(xPos, yPos));
-
-        // draw node value text
-        $tree.appendChild(createValueSVG(xPos, yPos, node.val));
+        const isLeaf = (node.left === null) && (node.right === null);
+        drawNodeCircleSVG(treeSVG, xPos, yPos, isLeaf);
+        drawNodeValueSVG(treeSVG, xPos, yPos, node.val);
     }
+    centerHorizontally(treeSVG, displaySVG); // center the tree in the display
 };
 
-const createNodeSVG = (x, y) => {
-    const $node = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    $node.setAttribute('class', 'node');
-    $node.setAttribute('r', 20); // fixed 20px radius
-    $node.setAttribute('cx', x);
-    $node.setAttribute('cy', y);
-    return $node;
+const drawNodeCircleSVG = (svg, x, y, isLeaf) => {
+    svg.append('circle')
+        .attr('class', isLeaf ? 'node leaf' : 'node')
+        .attr('r', 20) // fixed 20px radius
+        .attr('cx', x)
+        .attr('cy', y);
 };
 
-const createValueSVG = (x, y, val) => {
-    const $text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    $text.setAttribute('class', 'node-val');
-    $text.setAttribute('x', x);
-    $text.setAttribute('y', y);
-    $text.textContent = val;
-    return $text;
+const drawNodeValueSVG = (svg, x, y, val) => {
+    svg.append('text')
+        .attr('class', 'node-val')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('text-anchor', 'middle') // horizontally center text in node
+        .attr('dy', '7') // y offset text so it appears in center of node
+        .text(val);
 };
 
-const createBranchSVG = (x1, y1, x2, y2) => {
-    const $branch = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    $branch.setAttribute('class', 'branch');
-    $branch.setAttribute('x1', x1);
-    $branch.setAttribute('y1', y1);
-    $branch.setAttribute('x2', x2);
-    $branch.setAttribute('y2', y2);
-    return $branch;
+const drawNodeBranchSVG = (svg, x1, y1, x2, y2) => {
+    svg.append('line')
+        .attr('class', 'branch')
+        .attr('x1', x1)
+        .attr('y1', y1)
+        .attr('x2', x2)
+        .attr('y2', y2);
+};
+
+const centerHorizontally = (tree, display) => {
+
+    const treeRect = tree.node().getBoundingClientRect();
+    const treeCenter = treeRect.x + treeRect.width / 2;
+    // console.log(treeCenter);
+
+    const displayRect = display.node().getBoundingClientRect();
+    const displayCenter = displayRect.x + displayRect.width / 2;
+    // console.log(displayCenter);
+
+    tree.attr('transform', `translate(${displayCenter - treeCenter}, 0)`)
+
 };
 
 
@@ -133,11 +143,29 @@ const maxDepth = (root) => {
 
 // START APP
 const startApp = () => {
-    // create a sample tree
-    // const root = buildTreeFromArray([1, 2, null, 3, 4, 5, 6, 7, 8]);
-    const root = buildTreeFromArray([2,1,3,null,4,null,7,10,11,null,12,13,14,null,15,16]);
-    console.log(root);
-    renderTreeGraphic(root);
+    const $svg = d3.select('#svg-container')
+        .append('svg')
+        .attr('id', 'svg-display')
+        .append('g')
+        .attr('id', 'svg-tree');
+
+    console.log('on creation...')
+    console.log(d3.select('#svg-tree').node().getBoundingClientRect());
+
+    // get DOM elements
+    const $treeArrayInput = d3.select('#tree-array').node();
+
+    // default treeArrayInput value
+    $treeArrayInput.value = '[1, 2, null, 3, 4, 5, null, 6, 7]';
+
+    // Event listeners
+    d3.selectAll('#generate-tree').on('click', () => {
+        const tree = buildTreeFromArray(JSON.parse($treeArrayInput.value));
+        renderTreeGraphic(tree);
+    });
+
+
+    renderTreeGraphic(buildTreeFromArray(JSON.parse($treeArrayInput.value)));
 };
 
 startApp();
