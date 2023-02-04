@@ -28,10 +28,13 @@ body {
     fill: pink;
 }
 
-.node.leaf {
+.no-left,
+.no-right {
+    fill: lightgoldenrodyellow;
+}
+.no-left.no-right {
     fill: lightgreen;
 }
-
 .node-val {
     font-size: 20px;
 }
@@ -40,3 +43,25 @@ body {
     stroke: black;
     stroke-width: 2;
 }
+
+
+/* Create New Node */
+.new-node-area {
+    pointer-events: bounding-box;
+    opacity: 0.25;
+}
+.new-node-area:hover {
+    opacity: 1;
+}
+.new-node {
+    pointer-events: none;
+    stroke: darkgray;
+    fill: lightgrey;
+}
+.branch.new-branch {
+    pointer-events: none;
+    stroke: darkgray;
+}
+
+
+

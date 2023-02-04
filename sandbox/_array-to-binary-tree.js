@@ -26,7 +26,7 @@ const buildTreeFromArray = (arr) => {
             currNode.left = new TreeNode(leftVal);
             queue.push(currNode.left);
         }
-        if (rightVal !== null && leftVal !== undefined) {
+        if (rightVal !== null && rightVal !== undefined) {
             currNode.right = new TreeNode(rightVal);
             queue.push(currNode.right);
         }
