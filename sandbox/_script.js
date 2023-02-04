@@ -43,7 +43,7 @@ const buildTreeFromArray = (arr) => {
 const renderTreeGraphic = (root) => {
     if (root === null) return;
 
-    const MIN_HORIZ_DIST = 100; // horizontal distance between nodes at max depth
+    const MIN_HORIZ_DIST = 50; // horizontal distance between nodes at max depth
     const dy = 100;
     const treeDepth = maxDepth(root);
 
@@ -62,7 +62,9 @@ const renderTreeGraphic = (root) => {
         const [node, depth, x, y, pathID] = queue.shift();
 
         // calculate horizontal offset of child nodes
-        const dx = (treeDepth - depth + 1) * (MIN_HORIZ_DIST / 2);
+        // pixel distance between nodes at deepest point in tree
+        // will be equal to MIN_HORIZ_DIST
+        const dx = (Math.pow(2, treeDepth - 1) * MIN_HORIZ_DIST) / Math.pow(2, depth);
 
         let nodeClasses = 'node'; // coloration of nodes
         if (node.left) {
@@ -181,7 +183,6 @@ const maxDepth = (root) => {
 
 // TREE DATA
 let binaryTreeRoot = null;
-
 
 // START APP
 const startApp = () => {
