@@ -14,6 +14,33 @@ input,
     font-family: Monaco, 'Lucida Console', monospace;
 }
 
+#page-top {
+    background-color: #222;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-size: 20px;
+}
+
+.page-top-item {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    padding: 0px 10px;
+}
+.page-top-item:hover {
+    background-color: #000;
+}
+.page-top-item.push-right {
+    margin-left: auto;
+}
+
+
+
 #form {
     /* width: 90vw; */
     background-color:beige;
