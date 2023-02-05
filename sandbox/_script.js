@@ -83,22 +83,20 @@ const renderTreeGraphic = (root) => {
         drawNodeCircleSVG(treeSVG, x, y, nodeClasses, pathID);
         drawNodeValueSVG(treeSVG, x, y, node.val);
     }
-    centerHorizontally(treeSVG, displaySVG); // center the tree in the display
+    centerTreeHorizontally(treeSVG, displaySVG); // center the tree in the display
 
-    // add event listeners to 'insert node areas'
+    // Event Listeners
     d3.selectAll('.new-node-area')
         .on('click', e => {
-            insertNodeInTree(e.target.id);
+            insertNodeInTree(e.target);
         });
     d3.selectAll('.node')
         .on('mouseup', e => {
             if (e.which === 1) {
-                console.log('You left clicked node with id ', e.target.id);
+                displayEditNodeValueField(e.target);
             } else if (e.which === 3) {
-                deleteNodeInTree(e.target.id);
-                console.log('right click');
+                deleteNodeInTree(e.target);
             }
-            console.log(e.which);
         });
 };
 
@@ -147,7 +145,7 @@ const drawNewNodeAreaSVG = (svg, x1, y1, x2, y2, id) => {
         .attr('cy', y2);
 };
 
-const centerHorizontally = (tree, display) => {
+const centerTreeHorizontally = (tree, display) => {
     const treeRect = tree.node().getBoundingClientRect();
     const treeCenter = treeRect.x + treeRect.width / 2;
     const displayRect = display.node().getBoundingClientRect();
@@ -155,7 +153,8 @@ const centerHorizontally = (tree, display) => {
     tree.attr('transform', `translate(${displayCenter - treeCenter}, 0)`)
 };
 
-const insertNodeInTree = (pathID, val = 0) => {
+const insertNodeInTree = (target, val = 0) => {
+    let pathID = target.id;
     let node = binaryTreeRoot;
     // remove first character 's'
     pathID = pathID.slice(1);
@@ -179,7 +178,94 @@ const insertNodeInTree = (pathID, val = 0) => {
     renderTreeGraphic(binaryTreeRoot);
 };
 
-const deleteNodeInTree = (pathID) => {
+const displayEditNodeValueField = (target) => {
+    const rect = target.getBoundingClientRect();
+    const inputContainer = d3.select('#svg-container')
+        .append('div')
+        .attr('class', 'edit-value-container')
+        .style('position', 'absolute')
+        .style('width', rect.width+'px')
+        .style('height', rect.height+'px')
+        .style('left', rect.x+'px')
+        .style('top', rect.y+'px');
+
+    input = inputContainer.append('input')
+        .attr('class', 'edit-value-input');
+    input.node().focus();
+
+    const currValue = getNodeValue(target);
+
+    input.node().value = currValue;
+    input.node().select();
+
+    let userEscaped = false;
+
+    input.on('keyup', (e) => {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            input.node().blur();
+        } else if (e.key === 'Esc' || e.keyCode === 27) {
+            userEscaped = true;
+            input.node().blur();
+        }
+    });
+
+    input.on('blur', () => {
+        let newValue = userEscaped ? currValue : input.node().value;
+        // parse the new value as a number, if it can be
+        if (!isNaN(newValue) && newValue !== '') {
+            newValue = parseFloat(newValue);
+        }
+        editNodeValue(target, newValue);
+        inputContainer.remove();
+    });
+
+
+};
+
+const getNodeValue = (target) => {
+    let pathID = target.id;
+    let node = binaryTreeRoot;
+    // remove first character 's'
+    pathID = pathID.slice(1);
+
+    while (pathID.length > 1) {
+        if (pathID[0] === 'l')
+            node = node.left;
+        else if (pathID[0] === 'r')
+            node = node.right;
+        else throw new Error('Unable to parse pathID.');
+        pathID = pathID.slice(1);
+    }
+
+    if (pathID[0] === 'l')
+        return node.left.val;
+    else if (pathID[0] === 'r')
+        return node.right.val;
+    else throw new Error('Unable to parse pathID.');
+};
+
+const editNodeValue = (target, val) => {
+    let pathID = target.id;
+    let node = binaryTreeRoot;
+
+    pathID = pathID.slice(1);
+
+    while (pathID.length > 0) {
+        if (pathID[0] === 'l')
+            node = node.left;
+        else if (pathID[0] === 'r')
+            node = node.right;
+        else throw new Error('Unable to parse pathID.');
+        pathID = pathID.slice(1);
+    }
+    node.val = val;
+
+    updateTreeArray(binaryTreeRoot);
+    renderTreeGraphic(binaryTreeRoot);
+};
+
+const deleteNodeInTree = (target) => {
+    let pathID = target.id;
     let node = binaryTreeRoot;
     // remove first character 's'
     pathID = pathID.slice(1);
@@ -260,7 +346,7 @@ const startApp = () => {
     const $treeArrayInput = d3.select('#tree-array').node();
 
     // default treeArrayInput value
-    $treeArrayInput.value = '[1, 2, null, 3, 4, 5, null, 6, 7]';
+    $treeArrayInput.value = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
 
     // Event listeners
     d3.selectAll('#generate-tree').on('click', () => {

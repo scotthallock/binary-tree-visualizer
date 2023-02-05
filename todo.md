@@ -20,3 +20,4 @@
 7. (DONE) Center the tree's bounding box in the display as soon as it is drawn.
 8. Click + drag to reposition tree.
 9. Scroll to zoom in/out of tree.
+10. Generate random binary tree (up to x depth).
