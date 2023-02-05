@@ -316,7 +316,7 @@ const updateTreeArray = (root) => {
     }
 
     // update input field
-    d3.select('#tree-array').node().value = JSON.stringify(arr);
+    d3.select('#tree-array-input').node().value = JSON.stringify(arr);
 };
 
 
@@ -334,6 +334,7 @@ const maxDepth = (root) => {
 // TREE DATA
 let binaryTreeRoot = null;
 
+
 // START APP
 const startApp = () => {
     const $svg = d3.select('#svg-container')
@@ -343,19 +344,59 @@ const startApp = () => {
         .attr('id', 'svg-tree');
 
     // get DOM elements
-    const $treeArrayInput = d3.select('#tree-array').node();
+    const $treeArrayInput = d3.select('#tree-array-input').node();
 
     // default treeArrayInput value
     $treeArrayInput.value = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
 
     // Event listeners
-    d3.selectAll('#generate-tree').on('click', () => {
+    d3.selectAll('#array-to-tree').on('click', () => {
         binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
         renderTreeGraphic(binaryTreeRoot);
     });
 
     binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
     renderTreeGraphic(binaryTreeRoot);
+
+    // Toggle active state Collapsibles (Info, Examples, Options)
+
+    // const menuItems = d3.selectAll('.menu-bar-list-item');
+    // const collapsibles = d3.selectAll('.collapsible')
+
+    // menuItems.each(function(d, i, nodes) {
+    //         // console.log({this: this});
+    //         console.log(d3.select(node[i]))
+    //         // console.log('is it already active? ', d.classed('active'))
+    // });
+    // .on('click', function(x, y, z) {
+    //     console.log({x, y, z})
+    //     const activeClass = 'active';
+    //     const alreadyIsActive = d3.select(this).classed(activeClass);
+    //     d3.selectAll('.menu-bar-list-item').classed(activeClass, false);
+    //     d3.selectAll('.collapsible').classed(activeClass, false);
+    //     d3.select(this).classed(activeClass, !alreadyIsActive);
+    //     // d3.selectAll('.collapsible').filter((d, i) => i === ).classed(activeClass, false);
+    // });
+
+
+    const menuItems = document.querySelectorAll('.menu-bar-list-item');
+    const collapsibles = document.querySelectorAll('.collapsible');
+
+    menuItems.forEach((menuItem, i) => {
+        menuItem.addEventListener('click', () => {
+            const alreadyIsActive = menuItem.classList.contains('active');
+            menuItems.forEach(menuItem => menuItem.classList.remove('active'));
+            collapsibles.forEach(collapsible => collapsible.classList.remove('active'));
+            if (!alreadyIsActive) {
+                menuItem.classList.add('active');
+                collapsibles[i].classList.add('active');
+            }
+        });
+    });
+
+
+
+
 };
 
 startApp();

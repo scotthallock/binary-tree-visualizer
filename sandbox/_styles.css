@@ -1,4 +1,16 @@
+/*
+COLORS
+#199688 (main)
+
+#e0f2f1
+#b2dfdb
+#4db6ac
+#127a6b
+#074d40
+*/
+
 body {
+    background-color: #EEE;
     margin: auto;
     height: 100vh;
     width: 90vw;
@@ -6,14 +18,21 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 input,
+code,
 #svg-container {
     font-family: Monaco, 'Lucida Console', monospace;
 }
 
+code {
+    color: #127a6b;
+    background-color: white;
+}
+
+/********** PAGE TOP **********/
 #page-top {
     background-color: #222;
     height: 40px;
@@ -22,6 +41,7 @@ input,
     flex-direction: row;
     justify-content: flex-start;
     font-size: 20px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .page-top-item {
@@ -32,32 +52,103 @@ input,
     color: white;
     padding: 0px 10px;
 }
-.page-top-item:hover {
-    background-color: #000;
-}
 .page-top-item.push-right {
     margin-left: auto;
 }
-
-
-
-#form {
-    /* width: 90vw; */
-    background-color:beige;
-    padding: 10px;
+.page-top-item.push-right:hover{
+    filter: brightness(0) saturate(100%) invert(36%)
+            sepia(89%) saturate(1937%) hue-rotate(149deg)
+            brightness(92%) contrast(80%);
 }
 
-#tree-array {
-    width: 500px;
+/********** MENU BAR **********/
+#menu-bar {
+    width: 100%;
+}
+#menu-bar-list {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 60px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.menu-bar-list-item {
+    padding: 5px;
+    margin: 5px;
+    box-sizing: border-box;
+    border-bottom: 3px solid transparent;
+}
+.menu-bar-list-item.active {
+    color: #199688;
+    border-bottom: 3px solid #199688;
+}
+.menu-bar-list-item:hover {
+    cursor: pointer;
+    color: #199688;
 }
 
+/********** COLLAPSIBLE CONTAINERS **********/
+.collapsible {
+    width: 100%;
+    display: none;
+}
+.collapsible.active {
+    display: block;
+}
+
+/********** INPUT CONTAINER **********/
+#input-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#tree-array-input {
+    min-width: 500px;
+    max-width: 100%;
+    padding: 5px;
+    margin: 10px;
+}
+
+
+/********** BUTTONS CONTAINER **********/
+#buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+.create-tree {
+    border: none;
+    padding: 8px 16px;
+    margin: 0;
+    text-decoration: none;
+    background-color: #199688;
+    border-radius: 5px;
+    color: #FFF;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+}
+.create-tree:hover {
+    background: #127a6b;
+}
+
+
+
+
+/********** SVG CONTAINER **********/
 #svg-container {
     width: 100%;
     flex-grow: 1;
 }
 
 #svg-display {
-    background-color: lightblue;
+    /* background-color: lightblue; */
     width: 100%;
     height: 98%;
     margin: 0;
@@ -68,13 +159,9 @@ input,
 .node {
     stroke: black;
     stroke-width: 2;
-    fill: pink;
+    fill: lightgray;
 }
 
-.no-left,
-.no-right {
-    fill: lightgoldenrodyellow;
-}
 .no-left.no-right {
     fill: lightgreen;
 }

@@ -9,21 +9,6 @@ body {
     color: black;
 }
 
-#nav {
-    width: 90vw;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    background-color: gray;
-    height: 50px;
-    font-size: 150%;
-}
-
-.icon {
-    display: inline;
-}
-
 #display {
     margin: auto;
     width: 90vw;

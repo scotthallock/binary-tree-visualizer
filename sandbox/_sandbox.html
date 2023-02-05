@@ -12,17 +12,47 @@
 </head>
 <body>
     <header id="page-top">
-        <a class="page-top-item" href="#">LeetCode Binary Tree Creator</a>
+        <a class="page-top-item">LeetCode Binary Tree Creator</a>
         <a class="page-top-item push-right" href="https://github.com/scotthallock">
             <img src="../img/github-mark-white.svg" width="27px" height="27px">
         </a>
-        <a class="page-top-item" href="https://www.linkedin.com/in/scottjhallock/">
+        <!-- <a class="page-top-item" href="https://www.linkedin.com/in/scottjhallock/">
             <img src="../img/linkedin-mark-white.svg" width="30px" height="30px">
-        </a>
+        </a> -->
     </header>
-    <div id="form">
-        <input id="tree-array" type="text"/>
-        <button id="generate-tree" type="submit">Generate Binary Tree</button>
+    <div id="menu-bar">
+        <ul id="menu-bar-list">
+            <li class="menu-bar-list-item information active">Information</li>
+            <li class="menu-bar-list-item examples">Examples</li>
+            <li class="menu-bar-list-item options">Options</li>
+        </ul>
+    </div>
+    <div id="information-container" class="collapsible active">
+        <p>Create the test cases you want, faster!</p>
+        <p>Click on the diagram below to create a binary tree. Or, input an array to create the binary tree.</p>
+        <ul>
+            <li><strong>Left click:</strong> add node or edit node value</li>
+            <li><strong>Right click:</strong> delete node</li>
+        </ul>
+        <p>The input array follows the same format as <a href="https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-">LeetCode binary tree problem test cases.</a></p>
+        <p>The input <code>[1,null,2,3]</code> represents the serialized format of a binary tree using level order traversal, where <code>null</code> signifies a path terminator where no node exists below.
+        </p>
+    </div>
+    <div id="examples-container" class="collapsible">
+        <p>Examples will go here.</p>
+    </div>
+    <div id="options-container" class="collapsible">
+        <p>Options will go here.</p>
+        <p>Option 1.</p>
+        <p>Option 2.</p>
+        <p>Option 3.</p>
+    </div>
+    <div id="input-container">
+        <input id="tree-array-input" type="text"/>
+    </div>
+    <div id="buttons-container">
+        <button id="array-to-tree" class="create-tree" type="submit">Convert Array to Binary Tree</button>
+        <button id="random-tree" class="create-tree" type="submit">Random Binary Tree</button>
     </div>
     <div id="svg-container" oncontextmenu="return false;">
     </div>
