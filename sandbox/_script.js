@@ -113,7 +113,7 @@ const updateTreeArray = (root) => {
     while (arr[arr.length - 1] === null) arr.pop();
 
     // update input field
-    d3.select('#tree-array-input').node().value = JSON.stringify(arr);
+    d3.select('#tree-array-input').node().innerText = JSON.stringify(arr);
 };
 
 const renderTreeGraphic = (root) => {
@@ -353,11 +353,11 @@ const randomBinaryTree = (maxDepth, valueGenerator = () => 0) => {
     while (queue.length > 0) {
         const [node, depth] = queue.shift();
         if(Math.random() < childProbability && depth < maxDepth) {
-            node.left = new TreeNode(valueGenerator);
+            node.left = new TreeNode(valueGenerator());
             queue.push([node.left, depth + 1]);
         }
         if(Math.random() < childProbability && depth < maxDepth) {
-            node.right = new TreeNode(valueGenerator);
+            node.right = new TreeNode(valueGenerator());
             queue.push([node.right, depth + 1]);
         }
     }
@@ -381,11 +381,11 @@ const startApp = () => {
     const $treeArrayInput = document.getElementById('tree-array-input');
 
     // default treeArrayInput value
-    $treeArrayInput.value = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
+    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
 
     // Event listeners
     d3.select('#array-to-tree').on('click', () => {
-        binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
+        binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
         renderTreeGraphic(binaryTreeRoot);
     });
     d3.select('#random-tree').on('click', () => {
@@ -396,7 +396,7 @@ const startApp = () => {
         renderTreeGraphic(binaryTreeRoot);
     });
 
-    binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
+    binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
     renderTreeGraphic(binaryTreeRoot);
 
     const $menuItems = document.querySelectorAll('.menu-bar-list-item');

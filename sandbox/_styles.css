@@ -21,8 +21,8 @@ body {
     font-family: Helvetica, Arial, sans-serif;
 }
 
-input,
 code,
+#tree-array-input,
 #svg-container {
     font-family: Monaco, 'Lucida Console', monospace;
 }
@@ -117,10 +117,15 @@ code {
 }
 
 #tree-array-input {
-    width: 500px;
+    background-color: white;
+    border: 1px solid #222;
+    display: inline-block;
+    min-width: 500px;
+    min-width: min(500px, 100%);
     max-width: 100%; /*doesn't work?*/
     padding: 5px;
-    margin: 10px;
+    margin: 10px 0px;
+    box-sizing: border-box;
 }
 
 
@@ -148,6 +153,32 @@ code {
     background: #127a6b;
 }
 
+#random-tree:hover {
+    /* background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+    background-size: 1800% 1800%;
+    -webkit-animation: rainbow 1s ease infinite;
+    -moz-animation: rainbow 1s ease infinite;
+    animation: rainbow 1s ease infinite; */
+    background: linear-gradient(-45deg, rgba(255,0,0,1) 0%, rgba(255,154,0,1) 10%, rgba(208,222,33,1) 20%, rgba(79,220,74,1) 30%, rgba(63,218,216,1) 40%, rgba(47,201,226,1) 50%, rgba(28,127,238,1) 60%, rgba(95,21,242,1) 70%, rgba(186,12,248,1) 80%, rgba(251,7,217,1) 90%, rgba(255,0,0,1) 100%) 
+    0 0/200% 100%;
+    animation: rainbow 0.75s linear infinite;
+}
+/* @-webkit-keyframes rainbow {
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+}
+@-moz-keyframes rainbow {
+    0%{background-position:0% 82%}
+    50%{background-position:100% 19%}
+    100%{background-position:0% 82%}
+} */
+@keyframes rainbow { 
+    to {background-position: -200% 0}
+}
+
+
+
 
 /********** SVG CONTAINER **********/
 #svg-container {
@@ -173,20 +204,23 @@ code {
 }
 
 .node {
-    stroke: black;
+    stroke: #222;
     stroke-width: 2;
-    fill: lightgray;
+    fill: #222;
 }
 .node.leaf {
-    fill: #b2dfdb;
+    stroke: #127a6b;
+    fill: #127a6b;
 }
 .node-val {
+    stroke: white;
+    fill: white;
     pointer-events: none;
     font-size: 20px;
 }
 
 .branch {
-    stroke: black;
+    stroke: #222;
     stroke-width: 2;
 }
 
@@ -202,12 +236,12 @@ code {
 }
 .new-node {
     pointer-events: none;
-    stroke: darkgray;
-    fill: lightgrey;
+    stroke: #CCC;
+    fill: #CCC;
 }
 .branch.new-branch {
     pointer-events: none;
-    stroke: darkgray;
+    stroke: #CCC;
 }
 .edit-value-container {
     display: flex;
