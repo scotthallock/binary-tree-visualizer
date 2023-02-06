@@ -81,12 +81,15 @@ code {
     align-items: center;
     padding: 5px;
     margin: 5px;
-    box-sizing: border-box;
-    border-bottom: 3px solid transparent;
+    /* border-bottom: 3px solid transparent; */
 }
 .menu-bar-list-item.active {
     color: #199688;
-    border-bottom: 3px solid #199688;
+    /* border-bottom: 3px solid #199688; */
+}
+.expand-icon.active {
+    color: #199688;
+    transform: rotate(90deg);
 }
 .menu-bar-list-item:hover {
     cursor: pointer;

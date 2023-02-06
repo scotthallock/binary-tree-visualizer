@@ -371,22 +371,22 @@ const startApp = () => {
     renderTreeGraphic(binaryTreeRoot);
 
     const $menuItems = document.querySelectorAll('.menu-bar-list-item');
+    const $expandIcons = document.querySelectorAll('.expand-icon');
     const $collapsibles = document.querySelectorAll('.collapsible');
 
     $menuItems.forEach(($menuItem, i) => {
         $menuItem.addEventListener('click', () => {
             const alreadyIsActive = $menuItem.classList.contains('active');
             $menuItems.forEach($menuItem => $menuItem.classList.remove('active'));
+            $expandIcons.forEach($expandIcon => $expandIcon.classList.remove('active'));
             $collapsibles.forEach($collapsible => $collapsible.classList.remove('active'));
             if (!alreadyIsActive) {
                 $menuItem.classList.add('active');
+                $expandIcons[i].classList.add('active');
                 $collapsibles[i].classList.add('active');
             }
         });
     });
-
-
-
 
 };
 
