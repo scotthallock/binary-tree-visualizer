@@ -124,8 +124,8 @@ const renderTreeGraphic = (root) => {
         .attr('id', 'svg-tree');
     const treeSVG = d3.select('#svg-tree');
 
-    const MIN_HORIZ_DIST = 50; // Pixel distance between nodes at deepest level of tree.
-    const MAX_DEPTH_LIMIT = 5; // Maximum tree depth set to 5 (32 nodes total)
+    const MIN_HORIZ_DIST = 50; // Distance between nodes at deepest level of tree.
+    const MAX_DEPTH_LIMIT = 5; // Maximum tree depth set to 5 (32 nodes total).
     const dy = 100;
     const treeDepth = TreeNode.maxDepth(root);
     const displayWidth = displaySVG.node().getBoundingClientRect().width;
@@ -235,6 +235,7 @@ const drawNodeValueSVG = (svg, x, y, val) => {
 };
 
 const drawNodeBranchSVG = (svg, x1, y1, x2, y2) => {
+    const arrowPoints = [[0, 0], [0, 20], [20, 10]];
     svg.append('line')
         .attr('class', 'branch')
         .attr('x1', x1)
@@ -329,8 +330,7 @@ const transformTreeSVG = (tree, display) => {
     // scale tree
     let scale = 1;
     if (treeRect.width > displayRect.width) {
-        scale = displayRect.width / treeRect.width;
-        if (scale < 0.5) scale = 0.5;
+        scale = Math.max(displayRect.width / treeRect.width * 0.95, 0.5);
     }
     tree.attr('transform', `scale(${scale})`);
 
@@ -342,6 +342,28 @@ const transformTreeSVG = (tree, display) => {
     const displayCenter = displayRect.x + displayRect.width / 2;
     tree.attr('transform', `translate(${displayCenter - treeCenter}, 0) scale(${scale})`);
 };
+
+const randomBinaryTree = (maxDepth, valueGenerator = () => 0) => {
+    const root = new TreeNode(valueGenerator());
+    const rootCopy = root;
+
+    const childProbability = 0.75;
+
+    const queue = [[root, 1]];
+    while (queue.length > 0) {
+        const [node, depth] = queue.shift();
+        if(Math.random() < childProbability && depth < maxDepth) {
+            node.left = new TreeNode(valueGenerator);
+            queue.push([node.left, depth + 1]);
+        }
+        if(Math.random() < childProbability && depth < maxDepth) {
+            node.right = new TreeNode(valueGenerator);
+            queue.push([node.right, depth + 1]);
+        }
+    }
+    return rootCopy;
+}
+
 
 // TREE DATA
 let binaryTreeRoot = null;
@@ -362,8 +384,15 @@ const startApp = () => {
     $treeArrayInput.value = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
 
     // Event listeners
-    d3.selectAll('#array-to-tree').on('click', () => {
+    d3.select('#array-to-tree').on('click', () => {
         binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
+        renderTreeGraphic(binaryTreeRoot);
+    });
+    d3.select('#random-tree').on('click', () => {
+        binaryTreeRoot = randomBinaryTree(5, () => {
+            return Math.floor(Math.random() * 100);
+        });
+        updateTreeArray(binaryTreeRoot);
         renderTreeGraphic(binaryTreeRoot);
     });
 
