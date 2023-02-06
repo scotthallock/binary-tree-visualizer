@@ -11,7 +11,6 @@ class TreeNode {
     static traverse(root, path) {
         let node = root;
         while (path.length > 0) {
-            console.log({path});
             if (path[0] === 'l') {
                 node = node.left;
             }
@@ -23,7 +22,6 @@ class TreeNode {
             }
             path = path.slice(1);
         }
-        console.log('node to return, ', node)
         return node;
     }
 
@@ -50,10 +48,8 @@ class TreeNode {
         const next = path[path.length - 1];
         if (next === 'l') {
             parent.left = new TreeNode(value);
-            console.log('insert node left')
         } else if (next === 'r') {
             parent.right = new TreeNode(value);
-            console.log('insert node right')
         } else {
             throw new Error (`Traversal path string can only contain 'l' or 'r'.`);
         }
@@ -129,6 +125,7 @@ const renderTreeGraphic = (root) => {
     const treeSVG = d3.select('#svg-tree');
 
     const MIN_HORIZ_DIST = 50; // Pixel distance between nodes at deepest level of tree.
+    const MAX_DEPTH_LIMIT = 5; // Maximum tree depth set to 5 (32 nodes total)
     const dy = 100;
     const treeDepth = TreeNode.maxDepth(root);
     const displayWidth = displaySVG.node().getBoundingClientRect().width;
@@ -147,25 +144,24 @@ const renderTreeGraphic = (root) => {
         // Calculate horizontal offset of child nodes.
         const dx = (Math.pow(2, treeDepth - 1) * MIN_HORIZ_DIST) / Math.pow(2, depth);
 
-        let nodeClasses = 'node'; // coloration of nodes
+        // coloration of nodes
         if (node.left) {
             drawNodeBranchSVG(treeSVG, x, y, x-dx, y+dy);
             queue.push([node.left, depth+1, x-dx, y+dy, pathID+'l']);
-        } else {
-            nodeClasses += ' no-left';
+        } else if (pathID.length < MAX_DEPTH_LIMIT - 1) {
             drawNewNodeAreaSVG(treeSVG, x, y, x-dx, y+dy, pathID+'l');
         }
         if (node.right) {
             drawNodeBranchSVG(treeSVG, x, y, x+dx, y+dy);
             queue.push([node.right, depth+1, x+dx, y+dy, pathID+'r']);
-        } else {
-            nodeClasses += ' no-right';
+        } else if (pathID.length < MAX_DEPTH_LIMIT - 1) {
             drawNewNodeAreaSVG(treeSVG, x, y, x+dx, y+dy, pathID+'r');
         }
+        let nodeClasses = 'node' + (!node.left && !node.right ? ' leaf' : ''); 
         drawNodeCircleSVG(treeSVG, x, y, nodeClasses, pathID);
         drawNodeValueSVG(treeSVG, x, y, node.val);
     }
-    centerTreeHorizontally(treeSVG, displaySVG); // center the tree in the display
+    transformTreeSVG(treeSVG, displaySVG); // center and scale tree
 
     /**
      * Event Listners:
@@ -174,6 +170,7 @@ const renderTreeGraphic = (root) => {
      * 3) Delete a node
      */
     d3.selectAll('.new-node-area').on('click', e => {
+        console.log('CLICKED NEW NODE AREA');
         const path = e.target.id;
         binaryTreeRoot.insert(path, 0); // 0 will be default value
         updateTreeArray(binaryTreeRoot);
@@ -249,7 +246,19 @@ const drawNodeBranchSVG = (svg, x1, y1, x2, y2) => {
 const drawNewNodeAreaSVG = (svg, x1, y1, x2, y2, id) => {
     const group = svg.append('g')
         .attr('class', 'new-node-area')
-        .attr('id', id);
+        // .attr('id', id);
+
+    let x = Math.min(x1, x2);
+    if (x1 > x2) x -= 20;
+    let width = Math.abs(x1 - x2) + 20;
+    
+    group.append('rect')
+        .attr('class', 'new-node-boundary')
+        .attr('id', id)
+        .attr('x', x)
+        .attr('y', y1)
+        .attr('width', width)
+        .attr('height', y2 - y1 + 20);
     group.append('line')
         .attr('class', 'branch new-branch')
         .attr('x1', x1)
@@ -261,14 +270,6 @@ const drawNewNodeAreaSVG = (svg, x1, y1, x2, y2, id) => {
         .attr('r', 20)
         .attr('cx', x2)
         .attr('cy', y2);
-};
-
-const centerTreeHorizontally = (tree, display) => {
-    const treeRect = tree.node().getBoundingClientRect();
-    const treeCenter = treeRect.x + treeRect.width / 2;
-    const displayRect = display.node().getBoundingClientRect();
-    const displayCenter = displayRect.x + displayRect.width / 2;
-    tree.attr('transform', `translate(${displayCenter - treeCenter}, 0)`)
 };
 
 const drawEditNodeValueField = (target) => {
@@ -321,6 +322,26 @@ const drawEditNodeValueField = (target) => {
     });
 };
 
+const transformTreeSVG = (tree, display) => {
+    let treeRect = tree.node().getBoundingClientRect();
+    const displayRect = display.node().getBoundingClientRect();
+
+    // scale tree
+    let scale = 1;
+    if (treeRect.width > displayRect.width) {
+        scale = displayRect.width / treeRect.width;
+        if (scale < 0.5) scale = 0.5;
+    }
+    tree.attr('transform', `scale(${scale})`);
+
+    // updated bounding box of scaled tree
+    treeRect = tree.node().getBoundingClientRect();
+
+    // center tree horizontally
+    const treeCenter = treeRect.x + treeRect.width / 2;
+    const displayCenter = displayRect.x + displayRect.width / 2;
+    tree.attr('transform', `translate(${displayCenter - treeCenter}, 0) scale(${scale})`);
+};
 
 // TREE DATA
 let binaryTreeRoot = null;

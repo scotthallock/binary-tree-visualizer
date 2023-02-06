@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="_styles.css">
 </head>
 <body>
@@ -22,12 +23,21 @@
     </header>
     <div id="menu-bar">
         <ul id="menu-bar-list">
-            <li class="menu-bar-list-item information active">Information</li>
-            <li class="menu-bar-list-item examples">Examples</li>
-            <li class="menu-bar-list-item options">Options</li>
+            <li class="menu-bar-list-item information">
+                <span class="material-symbols-outlined expand-icon">expand_more</span>
+                Information
+            </li>
+            <li class="menu-bar-list-item examples">
+                <span class="material-symbols-outlined expand-icon">expand_more</span>
+                Examples
+            </li>
+            <li class="menu-bar-list-item options">
+                <span class="material-symbols-outlined expand-icon">expand_more</span>
+                Options
+            </li>
         </ul>
     </div>
-    <div id="information-container" class="collapsible active">
+    <div id="information-container" class="collapsible">
         <p>Create the test cases you want, faster!</p>
         <p>Click on the diagram below to create a binary tree. Or, input an array to create the binary tree.</p>
         <ul>
