@@ -156,6 +156,13 @@ code {
 
 }
 
+.empty-tree-message {
+    stroke: #199688;
+}
+.empty-tree-message-group:hover {
+    cursor: pointer;
+}
+
 .node {
     stroke: black;
     stroke-width: 2;

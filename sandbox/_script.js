@@ -59,13 +59,14 @@ class TreeNode {
         }
     }
 
-    maxDepth(node = this) {
-        if (node === null) return 0;
-        return Math.max(this.maxDepth(node.left), this.maxDepth(node.right)) + 1;
+    static maxDepth(root) {
+        if (root === null) return 0;
+        return Math.max(this.maxDepth(root.left), this.maxDepth(root.right)) + 1;
     }
 }
 
 const buildTreeFromArray = (arr) => {
+    if (arr.length === 0) return null;
     const root = new TreeNode(arr.shift());
     const queue = [root];
     while(queue.length > 0 && arr.length > 0) {
@@ -127,13 +128,16 @@ const renderTreeGraphic = (root) => {
         .attr('id', 'svg-tree');
     const treeSVG = d3.select('#svg-tree');
 
-     // empty tree, [] -> don't draw anything
-    if (root === null) return;
-
     const MIN_HORIZ_DIST = 50; // Pixel distance between nodes at deepest level of tree.
     const dy = 100;
-    const treeDepth = binaryTreeRoot.maxDepth();
+    const treeDepth = TreeNode.maxDepth(root);
     const displayWidth = displaySVG.node().getBoundingClientRect().width;
+
+    // empty tree, draw a message
+    if (root === null) {
+        drawEmptyTree(treeSVG, displayWidth / 2, dy);
+        return;
+    };
 
     // BFS traverse through tree and create SVG elements
     const queue = [[root, 1, displayWidth / 2, dy, '']]; // [node, depth, x, y, pathID]
@@ -188,6 +192,29 @@ const renderTreeGraphic = (root) => {
             updateTreeArray(binaryTreeRoot);
             renderTreeGraphic(binaryTreeRoot);
         }
+    });
+};
+
+const drawEmptyTree = (svg, x, y) => {
+    const group = svg.append('g')
+        .attr('class', 'empty-tree-message-group');
+    group.append('text')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('text-anchor', 'middle') // horizontally center text
+        .attr('dy', '7') // y offset text
+        .text('(empty tree)');
+    group.append('text')
+        .attr('class', 'empty-tree-message')
+        .attr('x', x)
+        .attr('y', y + 25)
+        .attr('text-anchor', 'middle') // horizontally center text
+        .attr('dy', '7') // y offset text
+        .text('click to add root node')
+    group.on('click', () => {
+            document.getElementById('tree-array-input').value = '[0]';
+            binaryTreeRoot = new TreeNode(0);
+            renderTreeGraphic(binaryTreeRoot);
     });
 };
 
@@ -308,7 +335,7 @@ const startApp = () => {
         .attr('id', 'svg-tree');
 
     // get DOM elements
-    const $treeArrayInput = d3.select('#tree-array-input').node();
+    const $treeArrayInput = document.getElementById('tree-array-input');
 
     // default treeArrayInput value
     $treeArrayInput.value = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
