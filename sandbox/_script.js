@@ -7,12 +7,64 @@ class TreeNode {
         this.left = (left===undefined ? null : left);
         this.right = (right===undefined ? null : right);
     }
+
+    static traverse(root, path) {
+        let node = root;
+        while (path.length > 0) {
+            console.log({path});
+            if (path[0] === 'l') {
+                node = node.left;
+            }
+            else if (path[0] === 'r') {
+                node = node.right;
+            }
+            else {
+                throw new Error (`Traversal path string can only contain 'l' or 'r'.`);
+            }
+            path = path.slice(1);
+        }
+        console.log('node to return, ', node)
+        return node;
+    }
+
+    static traverseToParent(root, path) {
+        return TreeNode.traverse(root, path.slice(0, path.length-1));
+    }
+
+    delete(path) {
+        let root = this;
+        const parent = TreeNode.traverseToParent(root, path);
+        const next = path[path.length - 1];
+        if (next === 'l') {
+            parent.left = null;
+        } else if (next === 'r') {
+            parent.right = null;
+        } else {
+            throw new Error (`Traversal path string can only contain 'l' or 'r'.`);
+        }
+    }
+
+    insert(path, value = 0) {
+        let root = this;
+        const parent = TreeNode.traverseToParent(root, path);
+        const next = path[path.length - 1];
+        if (next === 'l') {
+            parent.left = new TreeNode(value);
+            console.log('insert node left')
+        } else if (next === 'r') {
+            parent.right = new TreeNode(value);
+            console.log('insert node right')
+        } else {
+            throw new Error (`Traversal path string can only contain 'l' or 'r'.`);
+        }
+    }
+
+    maxDepth(node = this) {
+        if (node === null) return 0;
+        return Math.max(this.maxDepth(node.left), this.maxDepth(node.right)) + 1;
+    }
 }
 
-/**
- * @param {Array} arr 
- * @returns {TreeNode}
- */
 const buildTreeFromArray = (arr) => {
     const root = new TreeNode(arr.shift());
     const queue = [root];
@@ -34,35 +86,61 @@ const buildTreeFromArray = (arr) => {
     return root;
 };
 
+const updateTreeArray = (root) => {
+    if (root === null) {
+        d3.select('#tree-array-input').node().value = JSON.stringify([]);
+        return;
+    }
 
-/**
- * @param {TreeNode} root
- * @returns {}
- */
+    const arr = [root.val];
+    const queue = [root];
+    
+    // BFS algorithm to create array from tree
+    while (queue.length > 0) {
+        const node = queue.shift();
+        if (node.left) {
+            arr.push(node.left.val);
+            queue.push(node.left);
+        } else {
+            arr.push(null);
+        }
+        if (node.right) {
+            arr.push(node.right.val);
+            queue.push(node.right);
+        } else {
+            arr.push(null);
+        }
+    }
+
+    // trim nulls off the end of the array
+    while (arr[arr.length - 1] === null) arr.pop();
+
+    // update input field
+    d3.select('#tree-array-input').node().value = JSON.stringify(arr);
+};
+
 const renderTreeGraphic = (root) => {
-    if (root === null) return;
-
-    const MIN_HORIZ_DIST = 50; // horizontal distance between nodes at max depth
-    const dy = 100;
-    const treeDepth = maxDepth(root);
-
+    // Clear contents of display before re-drawing
     const displaySVG = d3.select('#svg-display');
-    displaySVG.selectAll('*').remove(); // clear contents
+    displaySVG.selectAll('*').remove();
     displaySVG.append('g')
         .attr('id', 'svg-tree');
     const treeSVG = d3.select('#svg-tree');
 
+     // empty tree, [] -> don't draw anything
+    if (root === null) return;
+
+    const MIN_HORIZ_DIST = 50; // Pixel distance between nodes at deepest level of tree.
+    const dy = 100;
+    const treeDepth = binaryTreeRoot.maxDepth();
     const displayWidth = displaySVG.node().getBoundingClientRect().width;
 
-
     // BFS traverse through tree and create SVG elements
-    const queue = [[root, 1, displayWidth / 2, dy, 's']]; // [node, depth, x, y, pathID]
+    const queue = [[root, 1, displayWidth / 2, dy, '']]; // [node, depth, x, y, pathID]
     while (queue.length > 0) {
         const [node, depth, x, y, pathID] = queue.shift();
 
-        // calculate horizontal offset of child nodes
-        // pixel distance between nodes at deepest point in tree
-        // will be equal to MIN_HORIZ_DIST
+        // Calculate horizontal offset of child nodes.
         const dx = (Math.pow(2, treeDepth - 1) * MIN_HORIZ_DIST) / Math.pow(2, depth);
 
         let nodeClasses = 'node'; // coloration of nodes
@@ -85,19 +163,32 @@ const renderTreeGraphic = (root) => {
     }
     centerTreeHorizontally(treeSVG, displaySVG); // center the tree in the display
 
-    // Event Listeners
-    d3.selectAll('.new-node-area')
-        .on('click', e => {
-            insertNodeInTree(e.target);
-        });
-    d3.selectAll('.node')
-        .on('mouseup', e => {
-            if (e.which === 1) {
-                displayEditNodeValueField(e.target);
-            } else if (e.which === 3) {
-                deleteNodeInTree(e.target);
+    /**
+     * Event Listners:
+     * 1) Add a new node
+     * 2) Edit a node's value
+     * 3) Delete a node
+     */
+    d3.selectAll('.new-node-area').on('click', e => {
+        const path = e.target.id;
+        binaryTreeRoot.insert(path, 0); // 0 will be default value
+        updateTreeArray(binaryTreeRoot);
+        renderTreeGraphic(binaryTreeRoot);
+    });
+    d3.selectAll('.node').on('mouseup', e => {
+        if (e.which === 1) {
+            drawEditNodeValueField(e.target);
+        } else if (e.which === 3) {
+            const path = e.target.id;
+            if (path === '') { // deleting root node
+                binaryTreeRoot = null;
+            } else {
+                binaryTreeRoot.delete(path);
             }
-        });
+            updateTreeArray(binaryTreeRoot);
+            renderTreeGraphic(binaryTreeRoot);
+        }
+    });
 };
 
 const drawNodeCircleSVG = (svg, x, y, nodeClasses, pathID) => {
@@ -153,32 +244,7 @@ const centerTreeHorizontally = (tree, display) => {
     tree.attr('transform', `translate(${displayCenter - treeCenter}, 0)`)
 };
 
-const insertNodeInTree = (target, val = 0) => {
-    let pathID = target.id;
-    let node = binaryTreeRoot;
-    // remove first character 's'
-    pathID = pathID.slice(1);
-
-    while (pathID.length > 1) {
-        if (pathID[0] === 'l')
-            node = node.left;
-        else if (pathID[0] === 'r')
-            node = node.right;
-        else throw new Error('Unable to parse pathID.');
-        pathID = pathID.slice(1);
-    }
-
-    if (pathID[0] === 'l')
-        node.left = new TreeNode(val);
-    else if (pathID[0] === 'r')
-        node.right = new TreeNode(val);
-    else throw new Error('Unable to parse pathID.');
-
-    updateTreeArray(binaryTreeRoot);
-    renderTreeGraphic(binaryTreeRoot);
-};
-
-const displayEditNodeValueField = (target) => {
+const drawEditNodeValueField = (target) => {
     const rect = target.getBoundingClientRect();
     const inputContainer = d3.select('#svg-container')
         .append('div')
@@ -189,17 +255,22 @@ const displayEditNodeValueField = (target) => {
         .style('left', rect.x+'px')
         .style('top', rect.y+'px');
 
-    input = inputContainer.append('input')
+    const path = target.id;
+    const currValue = TreeNode.traverse(binaryTreeRoot, path).val;
+
+    const input = inputContainer.append('input')
         .attr('class', 'edit-value-input');
     input.node().focus();
-
-    const currValue = getNodeValue(target);
-
     input.node().value = currValue;
     input.node().select();
 
+    /**
+     * Event listeners:
+     * 1. User presses enter -> update node value.
+     * 2. User pressese escape -> node value is NOT updated.
+     * 3. User clicks outside of field -> update node value.
+     */
     let userEscaped = false;
-
     input.on('keyup', (e) => {
         if (e.key === 'Enter' || e.keyCode === 13) {
             input.node().blur();
@@ -208,135 +279,28 @@ const displayEditNodeValueField = (target) => {
             input.node().blur();
         }
     });
-
     input.on('blur', () => {
         let newValue = userEscaped ? currValue : input.node().value;
         // parse the new value as a number, if it can be
         if (!isNaN(newValue) && newValue !== '') {
             newValue = parseFloat(newValue);
         }
-        editNodeValue(target, newValue);
+        // editNodeValue(target, newValue);
+        // goToNode(target.id, editNodeValue, newValue);
+        TreeNode.traverse(binaryTreeRoot, path).val = newValue;
         inputContainer.remove();
+        updateTreeArray(binaryTreeRoot);
+        renderTreeGraphic(binaryTreeRoot);
     });
-
-
 };
 
-const getNodeValue = (target) => {
-    let pathID = target.id;
-    let node = binaryTreeRoot;
-    // remove first character 's'
-    pathID = pathID.slice(1);
-
-    while (pathID.length > 1) {
-        if (pathID[0] === 'l')
-            node = node.left;
-        else if (pathID[0] === 'r')
-            node = node.right;
-        else throw new Error('Unable to parse pathID.');
-        pathID = pathID.slice(1);
-    }
-
-    if (pathID[0] === 'l')
-        return node.left.val;
-    else if (pathID[0] === 'r')
-        return node.right.val;
-    else throw new Error('Unable to parse pathID.');
-};
-
-const editNodeValue = (target, val) => {
-    let pathID = target.id;
-    let node = binaryTreeRoot;
-
-    pathID = pathID.slice(1);
-
-    while (pathID.length > 0) {
-        if (pathID[0] === 'l')
-            node = node.left;
-        else if (pathID[0] === 'r')
-            node = node.right;
-        else throw new Error('Unable to parse pathID.');
-        pathID = pathID.slice(1);
-    }
-    node.val = val;
-
-    updateTreeArray(binaryTreeRoot);
-    renderTreeGraphic(binaryTreeRoot);
-};
-
-const deleteNodeInTree = (target) => {
-    let pathID = target.id;
-    let node = binaryTreeRoot;
-    // remove first character 's'
-    pathID = pathID.slice(1);
-
-    while (pathID.length > 1) {
-        if (pathID[0] === 'l')
-            node = node.left;
-        else if (pathID[0] === 'r')
-            node = node.right;
-        else throw new Error('Unable to parse pathID.');
-        pathID = pathID.slice(1);
-    }
-
-    if (pathID[0] === 'l')
-        node.left = null;
-    else if (pathID[0] === 'r')
-        node.right = null;
-    else throw new Error('Unable to parse pathID.');
-
-    updateTreeArray(binaryTreeRoot);
-    renderTreeGraphic(binaryTreeRoot);
-};
-
-const updateTreeArray = (root) => {
-    const arr = [root.val];
-    const queue = [root];
-
-    // BFS algorithm to create array from tree
-    while (queue.length > 0) {
-        const node = queue.shift();
-        if (node.left) {
-            arr.push(node.left.val);
-            queue.push(node.left);
-        } else {
-            arr.push(null);
-        }
-        if (node.right) {
-            arr.push(node.right.val);
-            queue.push(node.right);
-        } else {
-            arr.push(null);
-        }
-    }
-
-    // trim all the extra nulls off the end of the array
-    while (arr[arr.length - 1] === null) {
-        arr.pop();
-    }
-
-    // update input field
-    d3.select('#tree-array-input').node().value = JSON.stringify(arr);
-};
-
-
-/**
- * @param {TreeNode} node 
- * @returns {Number}
- */
-const maxDepth = (root) => {
-    if (root === null) return 0;
-    const leftDepth = maxDepth(root.left);
-    const rightDepth = maxDepth(root.right);
-    return Math.max(leftDepth, rightDepth) + 1; // count current node
-};
 
 // TREE DATA
 let binaryTreeRoot = null;
 
-
 // START APP
 const startApp = () => {
+    // Create <svg> element and <g> element to group all tree nodes and branches
     const $svg = d3.select('#svg-container')
         .append('svg')
         .attr('id', 'svg-display')
@@ -358,38 +322,17 @@ const startApp = () => {
     binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.value));
     renderTreeGraphic(binaryTreeRoot);
 
-    // Toggle active state Collapsibles (Info, Examples, Options)
+    const $menuItems = document.querySelectorAll('.menu-bar-list-item');
+    const $collapsibles = document.querySelectorAll('.collapsible');
 
-    // const menuItems = d3.selectAll('.menu-bar-list-item');
-    // const collapsibles = d3.selectAll('.collapsible')
-
-    // menuItems.each(function(d, i, nodes) {
-    //         // console.log({this: this});
-    //         console.log(d3.select(node[i]))
-    //         // console.log('is it already active? ', d.classed('active'))
-    // });
-    // .on('click', function(x, y, z) {
-    //     console.log({x, y, z})
-    //     const activeClass = 'active';
-    //     const alreadyIsActive = d3.select(this).classed(activeClass);
-    //     d3.selectAll('.menu-bar-list-item').classed(activeClass, false);
-    //     d3.selectAll('.collapsible').classed(activeClass, false);
-    //     d3.select(this).classed(activeClass, !alreadyIsActive);
-    //     // d3.selectAll('.collapsible').filter((d, i) => i === ).classed(activeClass, false);
-    // });
-
-
-    const menuItems = document.querySelectorAll('.menu-bar-list-item');
-    const collapsibles = document.querySelectorAll('.collapsible');
-
-    menuItems.forEach((menuItem, i) => {
-        menuItem.addEventListener('click', () => {
-            const alreadyIsActive = menuItem.classList.contains('active');
-            menuItems.forEach(menuItem => menuItem.classList.remove('active'));
-            collapsibles.forEach(collapsible => collapsible.classList.remove('active'));
+    $menuItems.forEach(($menuItem, i) => {
+        $menuItem.addEventListener('click', () => {
+            const alreadyIsActive = $menuItem.classList.contains('active');
+            $menuItems.forEach($menuItem => $menuItem.classList.remove('active'));
+            $collapsibles.forEach($collapsible => $collapsible.classList.remove('active'));
             if (!alreadyIsActive) {
-                menuItem.classList.add('active');
-                collapsibles[i].classList.add('active');
+                $menuItem.classList.add('active');
+                $collapsibles[i].classList.add('active');
             }
         });
     });
