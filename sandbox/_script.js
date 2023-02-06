@@ -113,7 +113,15 @@ const updateTreeArray = (root) => {
     while (arr[arr.length - 1] === null) arr.pop();
 
     // update input field
-    d3.select('#tree-array-input').node().innerText = JSON.stringify(arr);
+    // $treeArrayInput = d3.select('#tree-array-input').node().innerText = JSON.stringify(arr);
+    const $treeArrayInput = document.getElementById('tree-array-input');
+    $treeArrayInput.innerText = JSON.stringify(arr);
+    // toggle class of input field to trigger pulse animation
+    $treeArrayInput.classList.toggle('pulse');
+    setTimeout(() => {
+        $treeArrayInput.classList.toggle('pulse');
+    }, 500);
+
 };
 
 const renderTreeGraphic = (root) => {
@@ -427,6 +435,21 @@ const startApp = () => {
                 $collapsibles[i].classList.add('active');
             }
         });
+    });
+
+    // Redraw digram when user resizes window.
+    let throttled = false;
+    let delay = 250; // milliseconds
+    console.log({window})
+    window.addEventListener('resize', () => {
+        if (!throttled) {
+            console.log('resize')
+            renderTreeGraphic(binaryTreeRoot);
+            throttled = true;
+            setTimeout(() => {
+                throttled = false;
+            }, delay);
+        }
     });
 
 };

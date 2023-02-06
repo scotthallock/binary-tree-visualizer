@@ -127,6 +127,13 @@ code {
     margin: 10px 0px;
     box-sizing: border-box;
 }
+#tree-array-input.pulse {
+   animation: pulse 0.5s 1;
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0px rgba(25, 150, 135, 0.7); }
+    100% { box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+}
 
 
 /********** BUTTONS CONTAINER **********/
@@ -201,6 +208,7 @@ code {
 }
 
 .node {
+    cursor: pointer;
     stroke: #222;
     stroke-width: 2;
     fill: #222;
@@ -223,6 +231,7 @@ code {
 
 /* Create New Node */
 .new-node-area {
+    cursor: pointer;
     opacity: 0.25;
 }
 .new-node-area:hover { /*add tag g, works in firefox?*/
