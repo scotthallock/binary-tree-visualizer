@@ -124,37 +124,49 @@ const renderTreeGraphic = (root) => {
         .attr('id', 'svg-tree');
     const treeSVG = d3.select('#svg-tree');
 
-    const MIN_HORIZ_DIST = 50; // Distance between nodes at deepest level of tree.
-    const MAX_DEPTH_LIMIT = 5; // Maximum tree depth set to 5 (32 nodes total).
+    const MIN_HORIZ_DIST = 50; // Margin between nodes at deepest level of tree.
+    const MAX_DEPTH_LIMIT = 6; // Maximum tree depth set to 6 (63 nodes possible).
     const dy = 100;
     const treeDepth = TreeNode.maxDepth(root);
-    const displayWidth = displaySVG.node().getBoundingClientRect().width;
+    console.log('calculateed treeDepth is ', treeDepth)
+    const displayCenter = displaySVG.node().getBoundingClientRect().width / 2;
 
     // empty tree, draw a message
     if (root === null) {
-        drawEmptyTree(treeSVG, displayWidth / 2, dy);
+        drawEmptyTree(treeSVG, displayCenter, dy);
         return;
     };
 
+    // Calculate the horizontal offset of child nodes, dx, at each depth of the tree.
+    // The value of dx is dependent on:
+    // 1) The depth of the node (i + 1)
+    // 2) The minimum distance between sibling nodes, MIN_HORIZ_DIST
+    // 3) The maximum allowable depth of the tree, MAX_DEPTH_LIMIT
+    const dxAtDepth = new Array(treeDepth).fill().map((_, i) => {
+        let dx = (MIN_HORIZ_DIST) * (Math.pow(2, treeDepth - 1) / Math.pow(2, i + 1));
+        if (treeDepth === MAX_DEPTH_LIMIT) dx /= 2;
+        return dx;
+    });
+
     // BFS traverse through tree and create SVG elements
-    const queue = [[root, 1, displayWidth / 2, dy, '']]; // [node, depth, x, y, pathID]
+    const queue = [[root, 1, displayCenter, dy, '']]; // [node, depth, x-position, y-position, pathID]
     while (queue.length > 0) {
         const [node, depth, x, y, pathID] = queue.shift();
 
         // Calculate horizontal offset of child nodes.
-        const dx = (Math.pow(2, treeDepth - 1) * MIN_HORIZ_DIST) / Math.pow(2, depth);
+        const dx = dxAtDepth[depth - 1];
 
         // coloration of nodes
         if (node.left) {
             drawNodeBranchSVG(treeSVG, x, y, x-dx, y+dy);
             queue.push([node.left, depth+1, x-dx, y+dy, pathID+'l']);
-        } else if (pathID.length < MAX_DEPTH_LIMIT - 1) {
+        } else if (pathID.length + 1 < MAX_DEPTH_LIMIT) {
             drawNewNodeAreaSVG(treeSVG, x, y, x-dx, y+dy, pathID+'l');
         }
         if (node.right) {
             drawNodeBranchSVG(treeSVG, x, y, x+dx, y+dy);
             queue.push([node.right, depth+1, x+dx, y+dy, pathID+'r']);
-        } else if (pathID.length < MAX_DEPTH_LIMIT - 1) {
+        } else if (pathID.length + 1 < MAX_DEPTH_LIMIT) {
             drawNewNodeAreaSVG(treeSVG, x, y, x+dx, y+dy, pathID+'r');
         }
         let nodeClasses = 'node' + (!node.left && !node.right ? ' leaf' : ''); 
@@ -370,18 +382,18 @@ let binaryTreeRoot = null;
 
 // START APP
 const startApp = () => {
-    // Create <svg> element and <g> element to group all tree nodes and branches
+    // Create <svg> element and <g> element in which SVG elements will be drawn.
     const $svg = d3.select('#svg-container')
         .append('svg')
         .attr('id', 'svg-display')
         .append('g')
         .attr('id', 'svg-tree');
 
-    // get DOM elements
+    // Get DOM elements
     const $treeArrayInput = document.getElementById('tree-array-input');
 
-    // default treeArrayInput value
-    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0]';
+    // Set default treeArrayInput value.
+    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0,0,0,null,null,null,null,null,null,0,0,0,0]';
 
     // Event listeners
     d3.select('#array-to-tree').on('click', () => {
@@ -389,7 +401,7 @@ const startApp = () => {
         renderTreeGraphic(binaryTreeRoot);
     });
     d3.select('#random-tree').on('click', () => {
-        binaryTreeRoot = randomBinaryTree(5, () => {
+        binaryTreeRoot = randomBinaryTree(6, () => { // Max depth 6
             return Math.floor(Math.random() * 100);
         });
         updateTreeArray(binaryTreeRoot);
