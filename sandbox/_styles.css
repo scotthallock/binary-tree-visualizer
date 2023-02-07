@@ -274,9 +274,14 @@ legend {
     fill: #222;
 }
 .node.leaf {
+    stroke: #222;
+    fill: #222;
+}
+.node.leaf.colored {
     stroke: #127a6b;
     fill: #127a6b;
 }
+
 .node-val {
     stroke: white;
     fill: white;
@@ -292,13 +297,16 @@ legend {
 /* Create New Node */
 .new-node-area {
     cursor: pointer;
+    opacity: 0;
+}
+.new-node-area.visible {
     opacity: 0.25;
 }
-.new-node-area:hover { /*add tag g, works in firefox?*/
+.new-node-area:hover {
     opacity: 1;
 }
 .new-node-boundary {
-    opacity: 0; /* set to a non-zero value to see 'hitbox' of new node*/
+    opacity: 0; /* set to a non-zero value to see 'hitbox' of new node */
 }
 .new-node {
     pointer-events: none;

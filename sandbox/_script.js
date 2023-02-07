@@ -90,7 +90,6 @@ const startApp = () => {
             const leftVal = arr.shift();
             const rightVal = arr.shift();
 
-            // support both null elements and empty (undefined) elements
             if (leftVal !== null && leftVal !== undefined) {
                 currNode.left = new TreeNode(leftVal);
                 queue.push(currNode.left);
@@ -135,7 +134,6 @@ const startApp = () => {
 
         // update input field
         // $treeArrayInput = d3.select('#tree-array-input').node().innerText = JSON.stringify(arr);
-        const $treeArrayInput = document.getElementById('tree-array-input');
         const textBefore = $treeArrayInput.innerText;
         const textAfter = JSON.stringify(arr);
         // toggle class of input field to trigger pulse animation
@@ -259,6 +257,7 @@ const startApp = () => {
     };
 
     const drawNodeCircleSVG = (svg, x, y, nodeClasses, pathID) => {
+        if ($optionColoredLeafs.checked) nodeClasses += ' colored';
         svg.append('circle')
             .attr('class', nodeClasses)
             .attr('id', pathID)
@@ -289,8 +288,7 @@ const startApp = () => {
 
     const drawNewNodeAreaSVG = (svg, x1, y1, x2, y2, id) => {
         const group = svg.append('g')
-            .attr('class', 'new-node-area')
-            // .attr('id', id);
+            .attr('class', $optionShowAddNode.checked ? 'new-node-area visible' : 'new-node-area');
 
         let x = Math.min(x1, x2);
         if (x1 > x2) x -= 20;
@@ -357,8 +355,6 @@ const startApp = () => {
             if (!isNaN(newValue) && newValue !== '') {
                 newValue = parseFloat(newValue);
             }
-            // editNodeValue(target, newValue);
-            // goToNode(target.id, editNodeValue, newValue);
             TreeNode.traverse(binaryTreeRoot, path).val = newValue;
             inputContainer.remove();
             updateTreeArray(binaryTreeRoot);
@@ -408,7 +404,15 @@ const startApp = () => {
     };
 
     const valueGenerator = () => {
-        return Math.floor(Math.random() * 100);
+        const radio = document.querySelector('input[name="new-node-choice"]:checked').value;
+        if (radio === 'fixed-val') {
+            return $optionFixedVal.value;
+        } else if (radio === 'random-string') {
+            return Math.random().toString(36).slice(2, 5); // 3-char alphanumeric string
+        } else {
+            return Math.floor(Math.random() * 100); // random number 0-99
+        }
+        
     };
 
     // TREE DATA GLOBAL VARIABLE
@@ -443,12 +447,24 @@ const startApp = () => {
     const $optionColoredLeafs = document.getElementById('option-colored-leafs');
     const $optionShowAddNode = document.getElementById('option-show-add-node');
     const $optionFixedVal = document.getElementById('new-node-fixed-val');
-    
+
     $optionsForm.addEventListener('change', () => {
-        console.log($optionColoredLeafs.checked)
-        console.log($optionShowAddNode.checked)
+        // radio buttons
         console.log(document.querySelector('input[name="new-node-choice"]:checked').value);
-        console.log($optionFixedVal.value)
+
+        // leaf coloring
+        if ($optionColoredLeafs.checked) {
+            document.querySelectorAll('.leaf').forEach(e => e.classList.add('colored'));
+        } else {
+            document.querySelectorAll('.leaf').forEach(e => e.classList.remove('colored'));
+        }
+
+        // new node area visiblility
+        if ($optionShowAddNode.checked) {
+            document.querySelectorAll('.new-node-area').forEach(e => e.classList.add('visible'));
+        } else {
+            document.querySelectorAll('.new-node-area').forEach(e => e.classList.remove('visible'));
+        }
     });
 
     /**

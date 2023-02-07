@@ -48,11 +48,11 @@
     <div id="examples-container" class="collapsible">
     </div>
     <div id="options-container" class="collapsible">
-        <form id="options-form">
+        <form id="options-form" onsubmit="return false;">
         <input type="checkbox" id="option-colored-leafs" name="option-colored-leafs" checked>
         <label for="option-colored-leafs"> Different color leaf nodes</label><br>
         <input type="checkbox" id="option-show-add-node" name="option-show-add-node" checked>
-        <label for="option-show-add-node"> Show where new nodes can be added</label><br>
+        <label for="option-show-add-node"> Preview where new nodes can be added</label><br>
         <fieldset>
             <legend>New node values:</legend>
             <div>
@@ -62,7 +62,7 @@
                 <input type="radio" id="new-node-choice-2" name="new-node-choice" value="random-num" checked/>
                 <label for="new-node-choice-2">Random number (0 - 99)</label><br>
                 <input type="radio" id="new-node-choice-3" name="new-node-choice" value="random-string" />
-                <label for="new-node-choice-3">Random 3-character string</label><br>
+                <label for="new-node-choice-3">Random 3-char alphanumeric string</label><br>
             </div>
         </fieldset>
         </form>
