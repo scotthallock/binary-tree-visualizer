@@ -48,10 +48,24 @@
     <div id="examples-container" class="collapsible">
     </div>
     <div id="options-container" class="collapsible">
-        <p>Options will go here.</p>
-        <p>Option 1.</p>
-        <p>Option 2.</p>
-        <p>Option 3.</p>
+        <form>
+        <input type="checkbox" id="option-colored-leafs" name="option-colored-leafs" checked>
+        <label for="option-colored-leafs"> Different color leaf nodes</label><br>
+        <input type="checkbox" id="option-show-add-node" name="option-show-add-node" checked>
+        <label for="option-show-add-node"> Show where new nodes can be added</label><br><br>
+        <fieldset>
+            <legend>New node values:</legend>
+            <div>
+                <input type="radio" id="new-node-choice-1" name="new-node-choice" value="fixed-val" />
+                <label for="new-node-choice-1">Constant value (limit 3 characters):</label>&nbsp&nbsp
+                <input type="text" id="new-node-fixed-val"><br>
+                <input type="radio" id="new-node-choice-2" name="new-node-choice" value="random-num" checked/>
+                <label for="new-node-choice-2">Random number (0 - 99)</label><br>
+                <input type="radio" id="new-node-choice-3" name="new-node-choice" value="random-string" />
+                <label for="new-node-choice-3">Random 3-character string</label><br>
+            </div>
+        </fieldset>
+        </form>
     </div>
     <div id="input-container">
         <span id="tree-array-input" contenteditable="true"></span>
