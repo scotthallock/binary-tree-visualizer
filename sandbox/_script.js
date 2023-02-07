@@ -155,7 +155,6 @@ const startApp = () => {
         const treeSVG = d3.select('#svg-tree');
 
         const MIN_HORIZ_DIST = 50; // Margin between nodes at deepest level of tree.
-        const MAX_DEPTH_LIMIT = 6; // Maximum tree depth set to 6 (63 nodes possible).
         const dy = 100;
         const treeDepth = TreeNode.maxDepth(root);
         const displayCenter = displaySVG.node().getBoundingClientRect().width / 2;
@@ -386,7 +385,7 @@ const startApp = () => {
         const root = new TreeNode(callback());
         const rootCopy = root;
 
-        const childProbability = 0.75;
+        const childProbability = 1;
 
         const queue = [[root, 1]];
         while (queue.length > 0) {
@@ -406,7 +405,7 @@ const startApp = () => {
     const valueGenerator = () => {
         const radio = document.querySelector('input[name="new-node-choice"]:checked').value;
         if (radio === 'fixed-val') {
-            return $optionFixedVal.value;
+            return $optionFixedVal.value; // input field value
         } else if (radio === 'random-string') {
             return Math.random().toString(36).slice(2, 5); // 3-char alphanumeric string
         } else {
@@ -417,6 +416,8 @@ const startApp = () => {
 
     // TREE DATA GLOBAL VARIABLE
     let binaryTreeRoot = null;
+    const MAX_DEPTH_LIMIT = 10; // Maximum tree depth set to 6 (63 nodes possible).
+
 
     // Using DS.js library to manipulate SVG elements in the DOM. (https://d3js.org/)
     // Create <svg> element and <g> element in which SVG elements will be drawn.
@@ -442,24 +443,20 @@ const startApp = () => {
     // Get DOM elements: example tree buttons container
     const $examplesContainer = document.getElementById('examples-container');
 
-    // Get DOM elements: options form
-    const $optionsForm = document.getElementById('options-form');
+    // Get DOM elements: options inputs
     const $optionColoredLeafs = document.getElementById('option-colored-leafs');
     const $optionShowAddNode = document.getElementById('option-show-add-node');
     const $optionFixedVal = document.getElementById('new-node-fixed-val');
 
-    $optionsForm.addEventListener('change', () => {
-        // radio buttons
-        console.log(document.querySelector('input[name="new-node-choice"]:checked').value);
-
-        // leaf coloring
+    $optionColoredLeafs.addEventListener('change', () => {
         if ($optionColoredLeafs.checked) {
             document.querySelectorAll('.leaf').forEach(e => e.classList.add('colored'));
         } else {
             document.querySelectorAll('.leaf').forEach(e => e.classList.remove('colored'));
         }
-
-        // new node area visiblility
+    });
+    
+    $optionShowAddNode.addEventListener('change', () => {
         if ($optionShowAddNode.checked) {
             document.querySelectorAll('.new-node-area').forEach(e => e.classList.add('visible'));
         } else {
@@ -484,7 +481,7 @@ const startApp = () => {
     });
 
     $randomTreeButton.addEventListener('click', () => {
-        binaryTreeRoot = randomBinaryTree(6, valueGenerator);
+        binaryTreeRoot = randomBinaryTree(MAX_DEPTH_LIMIT, valueGenerator); // max depth limit
         updateTreeArray(binaryTreeRoot);
         renderTreeGraphic(binaryTreeRoot);
     });

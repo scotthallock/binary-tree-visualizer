@@ -7,7 +7,7 @@
     <title>Binary Tree Sandbox</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="_styles.css">
 </head>
@@ -38,34 +38,56 @@
         </ul>
     </div>
     <div id="information-container" class="collapsible">
-        <p>Click on the diagram below to create a binary tree. Or, input an array to create the binary tree.</p>
-        <p>
-            <span class="material-symbols-outlined">left_click</span><strong>Left click:</strong> add node or edit node value &nbsp&nbsp
-            <span class="material-symbols-outlined">right_click</span><strong>Right click:</strong> delete node
-        </p>
-        <p>The input array follows the same format as <a href="https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-">LeetCode binary tree problem test cases.</a></p>
+        <p><strong>Click on the diagram below</strong> to create a binary tree, or input an array.</p>
+        <div id="information-controls">
+            <div class="information-controls-item">
+                <img src="../img/icons8-left-click-30.png">
+                <strong>Left click:</strong>&nbsp<u>add node</u>&nbspor&nbsp<u>change node value</u>
+            </div>
+            <div class="information-controls-item">
+                <img src="../img/icons8-right-click-30.png">
+                <strong>&nbspRight click:</strong>&nbsp<u>delete node</u>
+            </div>
+        </div>
+        <p>The array follows the format of <a href="https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-">LeetCode binary tree problem test cases.</a></p>
     </div>
     <div id="examples-container" class="collapsible">
+        <!--This div is filled with examples via JavaScript.-->
     </div>
-    <div id="options-container" class="collapsible">
-        <form id="options-form" onsubmit="return false;">
-        <input type="checkbox" id="option-colored-leafs" name="option-colored-leafs" checked>
-        <label for="option-colored-leafs"> Different color leaf nodes</label><br>
-        <input type="checkbox" id="option-show-add-node" name="option-show-add-node" checked>
-        <label for="option-show-add-node"> Preview where new nodes can be added</label><br>
-        <fieldset>
-            <legend>New node values:</legend>
-            <div>
-                <input type="radio" id="new-node-choice-1" name="new-node-choice" value="fixed-val" />
-                <label for="new-node-choice-1">Constant value (limit 3 characters):</label>&nbsp&nbsp
-                <input type="text" id="new-node-fixed-val" maxlength="3" value="hi!"><br>
-                <input type="radio" id="new-node-choice-2" name="new-node-choice" value="random-num" checked/>
-                <label for="new-node-choice-2">Random number (0 - 99)</label><br>
-                <input type="radio" id="new-node-choice-3" name="new-node-choice" value="random-string" />
-                <label for="new-node-choice-3">Random 3-char alphanumeric string</label><br>
-            </div>
-        </fieldset>
-        </form>
+        <div id="options-container" class="collapsible">
+            <span><strong>Large trees may not fit on screen.</strong> A tree with depth <strong>n</strong> can have up to <strong>2<sup>n</sup>-1</strong> nodes.</span>
+            <div id="options-container-fields" class="collapsible">
+                <fieldset>
+                    <legend>New node values:</legend>
+                    <div>
+                        <input type="radio" id="new-node-choice-1" name="new-node-choice" value="fixed-val" />
+                        <label for="new-node-choice-1">Constant value (limit 3 characters):&nbsp&nbsp</label>
+                        <input type="text" id="new-node-fixed-val" maxlength="3" value="hi!"><br>
+                        <input type="radio" id="new-node-choice-2" name="new-node-choice" value="random-num" checked/>
+                        <label for="new-node-choice-2">Random number (0 - 99)</label><br>
+                        <input type="radio" id="new-node-choice-3" name="new-node-choice" value="random-string" />
+                        <label for="new-node-choice-3">Random 3-char alphanumeric string</label><br>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Display:</legend>
+                    <input type="checkbox" id="option-colored-leafs" name="option-colored-leafs" checked>
+                    <label for="option-colored-leafs">Different color leaf nodes</label><br>
+                    <input type="checkbox" id="option-show-add-node" name="option-show-add-node" checked>
+                    <label for="option-show-add-node">Preview where new nodes can be added</label><br>
+                    <label for="max-tree-depth">Maximum tree depth:&nbsp&nbsp</label>
+                    <input type="number" id="max-tree-depth" name="max-tree-depth" value="6" min="3" max="10" step="1" /><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Random tree generator:</legend>
+                    <label for="left-child-probability" class="input-number-label">Probability of left child:&nbsp&nbsp</label>
+                    <input type="number" class="input-number-field" id="left-child-probability" name="left-child-probability" value="0.8" min="0.0" max="1.0" step="0.1" />
+                    <br>
+                    <label for="right-child-probability" class="input-number-label">Probability of right child:&nbsp&nbsp</label>
+                    <input type="number" class="input-number-field" id="right-child-probability" name="right-child-probability" value="0.8" min="0.0" max="1.0" step="0.1" />
+                </fieldset>
+        </div>
+        <button id="restore-default-settings">Restore Defaults</button>
     </div>
     <div id="alert-container">
         <span>Input should be JSON parsable</span>

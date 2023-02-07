@@ -1,25 +1,23 @@
-/*
-GREENS
-#199688 (main)
-#e0f2f1
-#b2dfdb
-#4db6ac
-#127a6b <--
-#074d40
-*/
-
-/*
-BLUES
-#34a9f4 (main)
-#e1f5fe
-#b3e5fc
-#4fc3f7
-#2b88d1 <--
-#2578bd
-*/
+/* Define custom color variables */
+:root {
+    --app-black:  #222;
+    --app-white: #FFF;
+    --app-gray: #CCC;
+    --app-background: #EEE;
+    --app-background-dark: #DDD;
+    --app-green: #199688;
+    --app-green-dark: #127a6b;
+    --app-blue: #34a9f4;
+    --app-blue-dark: #2b88d1;
+    --app-purple: #673ab7;
+    --app-purple-dark: #512da8;
+    --app-red-light: #fdcdd2;
+    --app-red: #f44336;
+    --app-red-dark: #b71c1b;
+}
 
 body {
-    background-color: #EEE;
+    background-color: var(--app-background);
     margin: auto;
     height: 100vh;
     width: 90vw;
@@ -27,15 +25,13 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
 }
 
-code,
 #tree-array-input,
-input,
 #svg-container,
 #error-message {
-    font-family: Monaco, 'Lucida Console', monospace;
+    font-family: 'Monaco', 'Lucida Console', 'Courier New', Courier, monospace;
 }
 
 button { /* change default button styles */
@@ -44,20 +40,16 @@ button { /* change default button styles */
     margin: 0;
     text-decoration: none;
     border-radius: 5px;
-    color: #FFF;
+    color: var(--app-white);
     cursor: pointer;
     text-align: center;
     font-size: 16px;
-}
-
-code {
-    color: #127a6b;
-    background-color: white;
+    font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
 }
 
 /********** PAGE TOP **********/
 #page-top {
-    background-color: #222;
+    background-color: var(--app-black);
     height: 40px;
     width: 100%;
     display: flex;
@@ -72,7 +64,7 @@ code {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: white;
+    color: var(--app-white);
     padding: 0px 10px;
 }
 .page-top-item.push-right {
@@ -108,28 +100,41 @@ code {
     margin: 5px;
 }
 .menu-bar-list-item.active {
-    color: #199688;
+    color: var(--app-green);
 }
 .expand-icon.active {
-    color: #199688;
+    color: var(--app-green);
     transform: rotate(90deg);
 }
 .menu-bar-list-item:hover {
+    color: var(--app-green);
     cursor: pointer;
-    color: #199688;
 }
 
 /********** COLLAPSIBLE CONTAINERS **********/
 .collapsible {
     width: 100%;
     display: none;
-    background-color: #DDD;
+    background-color: var(--app-background-dark);
     border-radius: 5px;
     padding: 0px 10px;
     box-sizing: border-box;
 }
 .collapsible.active {
     display: block;
+}
+
+/********** INFORMATION CONTAINER **********/
+#information-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.information-controls-item {
+    display: flex;
+    align-items: center;
 }
 
 /********** EXAMPLES CONTAINER **********/
@@ -145,30 +150,52 @@ code {
     gap: 10px;
 }
 .example-tree {
-    background-color: #34a9f4;
+    background-color: var(--app-purple);
 }
 .example-tree:hover {
-    background-color: #2b88d1;
+    background-color: var(--app-purple-dark);
 }
 
 /********** OPTIONS CONTAINER **********/
 #options-container {
     padding: 10px 10px;
+    display: none;
 }
-fieldset {
-    display: inline;
+#options-container.active {
+    display: block;
+}
+#options-container-fields {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 legend {
-    padding: 8px;
+    padding: 5px;
 }
 #new-node-fixed-val {
     width: 40px;
+}
+.input-number-label {
+    float: left;
+}
+.input-number-field {
+    float: right;
+}
+#restore-default-settings {
+    background-color: var(--app-blue);
+}
+#restore-default-settings:hover {
+    background-color: var(--app-blue-dark);
 }
 
 /********** ALERT CONTAINER **********/
 #alert-container {
     display: none;
-    background-color: pink;
+    background-color: var(--app-red-light);
+    color: var(--app-red-dark);
     border-radius: 5px;
     padding: 10px 10px;
     box-sizing: border-box;
@@ -187,8 +214,8 @@ legend {
 }
 
 #tree-array-input {
-    background-color: white;
-    border: 1px solid #222;
+    background-color: var(--app-white);
+    border: 1px solid var(--app-black);
     display: block;
     overflow: auto;
     min-width: 500px;
@@ -216,10 +243,10 @@ legend {
     gap: 10px;
 }
 .create-tree {
-    background-color: #199688;
+    background-color: var(--app-green);
 }
 .create-tree:hover {
-    background: #127a6b;
+    background:  var(--app-green-dark);
 }
 
 #random-tree:hover,
@@ -261,7 +288,7 @@ legend {
 }
 
 .empty-tree-message {
-    stroke: #199688;
+    stroke: var(--app-green);
 }
 .empty-tree-message-group:hover {
     cursor: pointer;
@@ -269,29 +296,27 @@ legend {
 
 .node {
     cursor: pointer;
-    stroke: #222;
     stroke-width: 2;
-    fill: #222;
+    stroke: var(--app-black);
+    fill: var(--app-black);
 }
 .node.leaf {
-    stroke: #222;
-    fill: #222;
+    stroke: var(--app-black);
+    fill: var(--app-black);
 }
 .node.leaf.colored {
-    stroke: #127a6b;
-    fill: #127a6b;
+    stroke: var(--app-green);
+    fill: var(--app-green);
 }
-
 .node-val {
-    stroke: white;
-    fill: white;
     pointer-events: none;
+    stroke: var(--app-white);
+    fill: var(--app-white);
     font-size: 20px;
 }
-
 .branch {
-    stroke: #222;
     stroke-width: 2;
+    stroke: var(--app-black);
 }
 
 /* Create New Node */
@@ -310,12 +335,12 @@ legend {
 }
 .new-node {
     pointer-events: none;
-    stroke: #CCC;
-    fill: #CCC;
+    stroke: var(--app-gray);
+    fill: var(--app-gray);
 }
 .branch.new-branch {
     pointer-events: none;
-    stroke: #CCC;
+    stroke: var(--app-gray);
 }
 .edit-value-container {
     display: flex;
