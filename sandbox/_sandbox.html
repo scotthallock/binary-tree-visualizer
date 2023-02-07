@@ -39,26 +39,26 @@
     </div>
     <div id="information-container" class="collapsible">
         <p>Click on the diagram below to create a binary tree. Or, input an array to create the binary tree.</p>
-        <p><span class="material-symbols-outlined">left_click</span><strong>Left click:</strong> add node or edit node value</p>
-        <p><span class="material-symbols-outlined">right_click</span><strong>Right click:</strong> delete node</p>
-        <p>The input array follows the same format as <a href="https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-">LeetCode binary tree problem test cases.</a></p>
-        <p>The input <code>[1,null,2,3]</code> represents the serialized format of a binary tree using level order traversal, where <code>null</code> signifies a path terminator where no node exists below.
+        <p>
+            <span class="material-symbols-outlined">left_click</span><strong>Left click:</strong> add node or edit node value &nbsp&nbsp
+            <span class="material-symbols-outlined">right_click</span><strong>Right click:</strong> delete node
         </p>
+        <p>The input array follows the same format as <a href="https://support.leetcode.com/hc/en-us/articles/360011883654-What-does-1-null-2-3-mean-in-binary-tree-representation-">LeetCode binary tree problem test cases.</a></p>
     </div>
     <div id="examples-container" class="collapsible">
     </div>
     <div id="options-container" class="collapsible">
-        <form>
+        <form id="options-form">
         <input type="checkbox" id="option-colored-leafs" name="option-colored-leafs" checked>
         <label for="option-colored-leafs"> Different color leaf nodes</label><br>
         <input type="checkbox" id="option-show-add-node" name="option-show-add-node" checked>
-        <label for="option-show-add-node"> Show where new nodes can be added</label><br><br>
+        <label for="option-show-add-node"> Show where new nodes can be added</label><br>
         <fieldset>
             <legend>New node values:</legend>
             <div>
                 <input type="radio" id="new-node-choice-1" name="new-node-choice" value="fixed-val" />
                 <label for="new-node-choice-1">Constant value (limit 3 characters):</label>&nbsp&nbsp
-                <input type="text" id="new-node-fixed-val"><br>
+                <input type="text" id="new-node-fixed-val" maxlength="3" value="hi!"><br>
                 <input type="radio" id="new-node-choice-2" name="new-node-choice" value="random-num" checked/>
                 <label for="new-node-choice-2">Random number (0 - 99)</label><br>
                 <input type="radio" id="new-node-choice-3" name="new-node-choice" value="random-string" />
@@ -66,6 +66,9 @@
             </div>
         </fieldset>
         </form>
+    </div>
+    <div id="alert-container">
+        <span>Input should be JSON parsable</span>
     </div>
     <div id="input-container">
         <span id="tree-array-input" contenteditable="true"></span>
