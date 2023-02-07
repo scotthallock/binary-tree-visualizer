@@ -30,6 +30,7 @@ class TreeNode {
     }
 
     delete(path) {
+        if (path === '') console.log('hey you clicked the root')
         let root = this;
         const parent = TreeNode.traverseToParent(root, path);
         const next = path[path.length - 1];
@@ -62,7 +63,6 @@ class TreeNode {
 }
 
 const buildTreeFromArray = (arr) => {
-    if (arr.length === 0) return null;
     const root = new TreeNode(arr.shift());
     const queue = [root];
     while(queue.length > 0 && arr.length > 0) {
@@ -85,14 +85,14 @@ const buildTreeFromArray = (arr) => {
 
 const updateTreeArray = (root) => {
     if (root === null) {
-        d3.select('#tree-array-input').node().value = JSON.stringify([]);
+        document.getElementById('tree-array-input').innerText = '[]';
         return;
     }
 
     const arr = [root.val];
-    const queue = [root];
-    
+
     // BFS algorithm to create array from tree
+    const queue = [root];
     while (queue.length > 0) {
         const node = queue.shift();
         if (node.left) {
@@ -145,6 +145,7 @@ const renderTreeGraphic = (root) => {
 
     // empty tree, draw a message
     if (root === null) {
+        updateTreeArray(binaryTreeRoot);
         drawEmptyTree(treeSVG, displayCenter, dy);
         return;
     };
@@ -232,8 +233,8 @@ const drawEmptyTree = (svg, x, y) => {
         .attr('dy', '7') // y offset text
         .text('click to add root node')
     group.on('click', () => {
-            document.getElementById('tree-array-input').value = '[0]';
-            binaryTreeRoot = new TreeNode(0);
+            binaryTreeRoot = new TreeNode(valueGenerator());
+            updateTreeArray(binaryTreeRoot);
             renderTreeGraphic(binaryTreeRoot);
     });
 };
@@ -457,17 +458,15 @@ const startApp = () => {
     // Event delegation for example tree buttons
     const exampleTrees = [
         {name: 'null',
-        serializedArray: '[1]'},
+        serializedArray: '[]'},
         {name: 'Values in Inorder Traversal',
-        serializedArray: '[2]'},
+        serializedArray: '[6,4,8,2,5,7,10,1,3,null,null,null,null,9,11]'},
         {name: 'Values in Preorder Traversal',
-        serializedArray: '[3]'},
+        serializedArray: '[1,2,7,3,6,8,9,4,5,null,null,null,null,10,11]'},
         {name: 'Values in Postorder Traversal',
-        serializedArray: '[4]'},
-        {name: 'Values in Postorder Traversal',
-        serializedArray: '[5]'},
-        {name: 'Values in Depth-First Search (DFS) Order',
-        serializedArray: '[6]'}
+        serializedArray: '[11,5,10,3,4,6,9,1,2,null,null,null,null,7,8]'},
+        {name: 'Values in Level-Order Traversal',
+        serializedArray: '[1,2,3,4,5,6,7,8,9,null,null,null,null,10,11]'},
     ];
 
     // Add example tree buttons to DOM inside of examples menu.
