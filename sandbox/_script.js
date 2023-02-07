@@ -66,11 +66,13 @@ const startApp = () => {
     const buildTreeFromArrString = (arrString) => {
         $alertContainer.classList.remove('active');
 
-        // replace single with double quotes
-        arrString = arrString.replace(/'/g, '"'); 
+        // replace single with double quotes, remove whitespaces
+        arrString = arrString.replace(/'/g, '"').replace(/\s/g, ''); 
         // remove extra brackets and re-add at ends
         arrString = '[' + arrString.replace(/[\[\]]+/g, '') + ']'; 
         $treeArrayInput.innerText = arrString;
+
+        if (arrString === '[]') return null;
 
         try {
             arr = JSON.parse(arrString);
@@ -102,6 +104,7 @@ const startApp = () => {
     };
 
     const updateTreeArray = (root) => {
+        $alertContainer.classList.remove('active');
         if (root === null) {
             document.getElementById('tree-array-input').innerText = '[]';
             return;
@@ -143,7 +146,6 @@ const startApp = () => {
                 $treeArrayInput.classList.toggle('pulse');
             }, 500);
         }
-
     };
 
     const renderTreeGraphic = (root) => {
@@ -528,7 +530,7 @@ const startApp = () => {
     });
 
     // Set default treeArrayInput value.
-    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0,0,0,null,null,null,null,null,null,0,0,0,0]';
+    $treeArrayInput.innerText = '[4,8,15,16,23,null,42]';
     binaryTreeRoot = buildTreeFromArrString($treeArrayInput.innerText);
     renderTreeGraphic(binaryTreeRoot);
 };
