@@ -1,12 +1,21 @@
 /*
-COLORS
+GREENS
 #199688 (main)
-
 #e0f2f1
 #b2dfdb
 #4db6ac
-#127a6b
+#127a6b <--
 #074d40
+*/
+
+/*
+BLUES
+#34a9f4 (main)
+#e1f5fe
+#b3e5fc
+#4fc3f7
+#2b88d1 <--
+#2578bd
 */
 
 body {
@@ -25,6 +34,18 @@ code,
 #tree-array-input,
 #svg-container {
     font-family: Monaco, 'Lucida Console', monospace;
+}
+
+button { /* change default button styles */
+    border: none;
+    padding: 8px 16px;
+    margin: 0;
+    text-decoration: none;
+    border-radius: 5px;
+    color: #FFF;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
 }
 
 code {
@@ -71,7 +92,8 @@ code {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 60px;
+    flex-wrap: wrap;
+    gap: 0px 60px;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -99,7 +121,7 @@ code {
 .collapsible {
     width: 100%;
     display: none;
-    background-color: #b2dfdb;
+    background-color: #DDD;
     border-radius: 5px;
     padding: 0px 10px;
     box-sizing: border-box;
@@ -107,6 +129,27 @@ code {
 .collapsible.active {
     display: block;
 }
+
+/********** EXAMPLES CONTAINER **********/
+#examples-container {
+    padding: 10px 10px;
+    display: none;
+}
+#examples-container.active {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.example-tree {
+    background-color: #34a9f4;
+}
+.example-tree:hover {
+    background-color: #2b88d1;
+}
+
+
 
 /********** INPUT CONTAINER **********/
 #input-container {
@@ -122,7 +165,7 @@ code {
     display: inline-block;
     min-width: 500px;
     min-width: min(500px, 100%);
-    max-width: 100%; /*doesn't work?*/
+    max-width: 100%;
     padding: 5px;
     margin: 10px 0px;
     box-sizing: border-box;
@@ -142,46 +185,35 @@ code {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 10px;
 }
 .create-tree {
-    border: none;
-    padding: 8px 16px;
-    margin: 0;
-    text-decoration: none;
     background-color: #199688;
-    border-radius: 5px;
-    color: #FFF;
-    cursor: pointer;
-    text-align: center;
-    font-size: 16px;
 }
 .create-tree:hover {
     background: #127a6b;
 }
 
 #random-tree:hover {
-    /* background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
-    background-size: 1800% 1800%;
-    -webkit-animation: rainbow 1s ease infinite;
-    -moz-animation: rainbow 1s ease infinite;
-    animation: rainbow 1s ease infinite; */
-    background: linear-gradient(-45deg, rgba(255,0,0,1) 0%, rgba(255,154,0,1) 10%, rgba(208,222,33,1) 20%, rgba(79,220,74,1) 30%, rgba(63,218,216,1) 40%, rgba(47,201,226,1) 50%, rgba(28,127,238,1) 60%, rgba(95,21,242,1) 70%, rgba(186,12,248,1) 80%, rgba(251,7,217,1) 90%, rgba(255,0,0,1) 100%) 
-    0 0/200% 100%;
+    background: linear-gradient(-45deg, /* skew gradient */
+        rgba(255,0,0,1) 0%,
+        rgba(255,154,0,1) 10%,
+        rgba(208,222,33,1) 20%,
+        rgba(79,220,74,1) 30%,
+        rgba(63,218,216,1) 40%,
+        rgba(47,201,226,1) 50%, 
+        rgba(28,127,238,1) 60%,
+        rgba(95,21,242,1) 70%,
+        rgba(186,12,248,1) 80%,
+        rgba(251,7,217,1) 90%,
+        rgba(255,0,0,1) 100%)
+    0/200% 100%; /* position/x-size% y-size% */
     animation: rainbow 0.75s linear infinite;
 }
-/* @-webkit-keyframes rainbow {
-    0%{background-position:0% 82%}
-    50%{background-position:100% 19%}
-    100%{background-position:0% 82%}
-}
-@-moz-keyframes rainbow {
-    0%{background-position:0% 82%}
-    50%{background-position:100% 19%}
-    100%{background-position:0% 82%}
-} */
 @keyframes rainbow { 
-    to {background-position: -200% 0}
+    /* 'to' or '100%' works here */
+    to {background-position: -200% 0} /* scroll background x position 200% */
 }
 
 /********** SVG CONTAINER **********/

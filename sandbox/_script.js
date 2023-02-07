@@ -115,12 +115,16 @@ const updateTreeArray = (root) => {
     // update input field
     // $treeArrayInput = d3.select('#tree-array-input').node().innerText = JSON.stringify(arr);
     const $treeArrayInput = document.getElementById('tree-array-input');
-    $treeArrayInput.innerText = JSON.stringify(arr);
+    const textBefore = $treeArrayInput.innerText;
+    const textAfter = JSON.stringify(arr);
     // toggle class of input field to trigger pulse animation
-    $treeArrayInput.classList.toggle('pulse');
-    setTimeout(() => {
+    if (textBefore !== textAfter) {
+        $treeArrayInput.innerText = textAfter;
         $treeArrayInput.classList.toggle('pulse');
-    }, 500);
+        setTimeout(() => {
+            $treeArrayInput.classList.toggle('pulse');
+        }, 500);
+    }
 
 };
 
@@ -145,9 +149,9 @@ const renderTreeGraphic = (root) => {
         return;
     };
 
-    // Calculate the horizontal offset of child nodes, dx, at each depth of the tree.
+    // Calculate the horizontal offset (dx) of child nodes at each depth of the tree.
     // The value of dx is dependent on:
-    // 1) The depth of the node (i + 1)
+    // 1) The depth of the node, (i + 1)
     // 2) The minimum distance between sibling nodes, MIN_HORIZ_DIST
     // 3) The maximum allowable depth of the tree, MAX_DEPTH_LIMIT
     const dxAtDepth = new Array(treeDepth).fill().map((_, i) => {
@@ -157,7 +161,7 @@ const renderTreeGraphic = (root) => {
     });
 
     // BFS traverse through tree and create SVG elements
-    const queue = [[root, 1, displayCenter, dy, '']]; // [node, depth, x-position, y-position, pathID]
+    const queue = [[root, 1, displayCenter, 75, '']]; // [node, depth, x-position, y-position, pathID]
     while (queue.length > 0) {
         const [node, depth, x, y, pathID] = queue.shift();
 
@@ -190,9 +194,8 @@ const renderTreeGraphic = (root) => {
      * 3) Delete a node
      */
     d3.selectAll('.new-node-area').on('click', e => {
-        console.log('CLICKED NEW NODE AREA');
         const path = e.target.id;
-        binaryTreeRoot.insert(path, 0); // 0 will be default value
+        binaryTreeRoot.insert(path, valueGenerator());
         updateTreeArray(binaryTreeRoot);
         renderTreeGraphic(binaryTreeRoot);
     });
@@ -363,8 +366,8 @@ const transformTreeSVG = (tree, display) => {
     tree.attr('transform', `translate(${displayCenter - treeCenter}, 0) scale(${scale})`);
 };
 
-const randomBinaryTree = (maxDepth, valueGenerator = () => 0) => {
-    const root = new TreeNode(valueGenerator());
+const randomBinaryTree = (maxDepth, callback = () => 0) => {
+    const root = new TreeNode(callback());
     const rootCopy = root;
 
     const childProbability = 0.75;
@@ -382,46 +385,60 @@ const randomBinaryTree = (maxDepth, valueGenerator = () => 0) => {
         }
     }
     return rootCopy;
-}
+};
 
+const valueGenerator = () => {
+    return Math.floor(Math.random() * 100);
+};
 
-// TREE DATA
+const fillExamples = (examples) => {
+    const htmlString = examples.reduce((acc, e) => {
+        return acc + `<button class="example-tree">${e.name}</button>`
+    }, '');
+    
+};
+
+// TREE DATA GLOBAL VAR
 let binaryTreeRoot = null;
 
 // START APP
 const startApp = () => {
+    // Using DS.js library to manipulate SVG elements in the DOM. (https://d3js.org/)
     // Create <svg> element and <g> element in which SVG elements will be drawn.
-    const $svg = d3.select('#svg-container')
+    d3.select('#svg-container')
         .append('svg')
         .attr('id', 'svg-display')
         .append('g')
         .attr('id', 'svg-tree');
 
-    // Get DOM elements
+    // Get DOM elements: input and button
     const $treeArrayInput = document.getElementById('tree-array-input');
+    const $arrayToTreeButton = document.getElementById('array-to-tree');
+    const $randomTreeButton = document.getElementById('random-tree');
 
-    // Set default treeArrayInput value.
-    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0,0,0,null,null,null,null,null,null,0,0,0,0]';
-
-    // Event listeners
-    d3.select('#array-to-tree').on('click', () => {
-        binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
-        renderTreeGraphic(binaryTreeRoot);
-    });
-    d3.select('#random-tree').on('click', () => {
-        binaryTreeRoot = randomBinaryTree(6, () => { // Max depth 6
-            return Math.floor(Math.random() * 100);
-        });
-        updateTreeArray(binaryTreeRoot);
-        renderTreeGraphic(binaryTreeRoot);
-    });
-
-    binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
-    renderTreeGraphic(binaryTreeRoot);
-
+    // Get DOM elements: collapsible menus
     const $menuItems = document.querySelectorAll('.menu-bar-list-item');
     const $expandIcons = document.querySelectorAll('.expand-icon');
     const $collapsibles = document.querySelectorAll('.collapsible');
+
+    // Get DOM elements: example tree buttons
+    // const $exampleTreeButtons = document.querySelectorAll('.example-tree');
+    const $examplesContainer = document.getElementById('examples-container');
+
+    /**
+     * Event Listeners
+     */
+    // add event listener to array input to detect enter key
+    $arrayToTreeButton.addEventListener('click', () => {
+        binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
+        renderTreeGraphic(binaryTreeRoot);
+    });
+
+    $randomTreeButton.addEventListener('click', () => {
+        binaryTreeRoot = randomBinaryTree(6, valueGenerator);
+        updateTreeArray(binaryTreeRoot);
+        renderTreeGraphic(binaryTreeRoot);
+    });
 
     $menuItems.forEach(($menuItem, i) => {
         $menuItem.addEventListener('click', () => {
@@ -437,7 +454,37 @@ const startApp = () => {
         });
     });
 
-    // Redraw digram when user resizes window.
+    // Event delegation for example tree buttons
+    const exampleTrees = [
+        {name: 'null',
+        serializedArray: '[1]'},
+        {name: 'Values in Inorder Traversal',
+        serializedArray: '[2]'},
+        {name: 'Values in Preorder Traversal',
+        serializedArray: '[3]'},
+        {name: 'Values in Postorder Traversal',
+        serializedArray: '[4]'},
+        {name: 'Values in Postorder Traversal',
+        serializedArray: '[5]'},
+        {name: 'Values in Depth-First Search (DFS) Order',
+        serializedArray: '[6]'}
+    ];
+
+    // Add example tree buttons to DOM inside of examples menu.
+    $examplesContainer.innerHTML = exampleTrees.reduce((acc, e) => {
+        return acc + `<button class="example-tree">${e.name}</button>`
+    }, '');
+    
+    $examplesContainer.addEventListener('click', e => {
+        if (e.target.tagName !== 'BUTTON') return;
+        const name = e.target.innerText;
+        const example = exampleTrees.find(e => e.name === name);
+        $treeArrayInput.innerText = example.serializedArray;
+        binaryTreeRoot = buildTreeFromArray(JSON.parse(example.serializedArray));
+        renderTreeGraphic(binaryTreeRoot);
+    });
+
+    // Redraw diagram when user resizes window.
     let throttled = false;
     let delay = 250; // milliseconds
     console.log({window})
@@ -452,6 +499,10 @@ const startApp = () => {
         }
     });
 
+    // Set default treeArrayInput value.
+    $treeArrayInput.innerText = '[1,2,0,3,4,0,null,5,null,6,7,null,0,0,0,null,null,null,null,null,null,0,0,0,0]';
+    binaryTreeRoot = buildTreeFromArray(JSON.parse($treeArrayInput.innerText));
+    renderTreeGraphic(binaryTreeRoot);
 };
 
 startApp();
