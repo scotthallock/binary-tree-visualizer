@@ -31,7 +31,6 @@ const startApp = () => {
         }
 
         delete(path) {
-            if (path === '') console.log('hey you clicked the root')
             let root = this;
             const parent = TreeNode.traverseToParent(root, path);
             const next = path[path.length - 1];
@@ -170,10 +169,11 @@ const startApp = () => {
         // The value of dx is dependent on:
         // 1) The depth of the node, (i + 1)
         // 2) The minimum distance between sibling nodes, MIN_HORIZ_DIST
-        // 3) The maximum allowable depth of the tree, MAX_DEPTH_LIMIT
+        // 3) The maximum allowable depth of the tree, maxTreeDepth
         const dxAtDepth = new Array(treeDepth).fill().map((_, i) => {
             let dx = (MIN_HORIZ_DIST) * (Math.pow(2, treeDepth - 1) / Math.pow(2, i + 1));
-            if (treeDepth === MAX_DEPTH_LIMIT) dx /= 2;
+            console.log({treeDepth, maxTreeDepth})
+            if (treeDepth >= maxTreeDepth) dx /= 2;
             return dx;
         });
 
@@ -189,13 +189,13 @@ const startApp = () => {
             if (node.left) {
                 drawNodeBranchSVG(treeSVG, x, y, x-dx, y+dy);
                 queue.push([node.left, depth+1, x-dx, y+dy, pathID+'l']);
-            } else if (pathID.length + 1 < MAX_DEPTH_LIMIT) {
+            } else if (pathID.length + 1 < maxTreeDepth) {
                 drawNewNodeAreaSVG(treeSVG, x, y, x-dx, y+dy, pathID+'l');
             }
             if (node.right) {
                 drawNodeBranchSVG(treeSVG, x, y, x+dx, y+dy);
                 queue.push([node.right, depth+1, x+dx, y+dy, pathID+'r']);
-            } else if (pathID.length + 1 < MAX_DEPTH_LIMIT) {
+            } else if (pathID.length + 1 < maxTreeDepth) {
                 drawNewNodeAreaSVG(treeSVG, x, y, x+dx, y+dy, pathID+'r');
             }
             let nodeClasses = 'node' + (!node.left && !node.right ? ' leaf' : ''); 
@@ -385,16 +385,14 @@ const startApp = () => {
         const root = new TreeNode(callback());
         const rootCopy = root;
 
-        const childProbability = 1;
-
         const queue = [[root, 1]];
         while (queue.length > 0) {
             const [node, depth] = queue.shift();
-            if(Math.random() < childProbability && depth < maxDepth) {
+            if(Math.random() < $optionLeftChildProb.value && depth < maxDepth) {
                 node.left = new TreeNode(valueGenerator());
                 queue.push([node.left, depth + 1]);
             }
-            if(Math.random() < childProbability && depth < maxDepth) {
+            if(Math.random() < $optionRightChildProb.value && depth < maxDepth) {
                 node.right = new TreeNode(valueGenerator());
                 queue.push([node.right, depth + 1]);
             }
@@ -414,9 +412,7 @@ const startApp = () => {
         
     };
 
-    // TREE DATA GLOBAL VARIABLE
-    let binaryTreeRoot = null;
-    const MAX_DEPTH_LIMIT = 10; // Maximum tree depth set to 6 (63 nodes possible).
+
 
 
     // Using DS.js library to manipulate SVG elements in the DOM. (https://d3js.org/)
@@ -443,10 +439,13 @@ const startApp = () => {
     // Get DOM elements: example tree buttons container
     const $examplesContainer = document.getElementById('examples-container');
 
-    // Get DOM elements: options inputs
+    // Get DOM elements: OPTIONS
+    const $optionFixedVal = document.getElementById('new-node-fixed-val');
     const $optionColoredLeafs = document.getElementById('option-colored-leafs');
     const $optionShowAddNode = document.getElementById('option-show-add-node');
-    const $optionFixedVal = document.getElementById('new-node-fixed-val');
+    const $optionMaxTreeDepth = document.getElementById('max-tree-depth');
+    const $optionLeftChildProb = document.getElementById('left-child-probability');
+    const $optionRightChildProb = document.getElementById('right-child-probability');
 
     $optionColoredLeafs.addEventListener('change', () => {
         if ($optionColoredLeafs.checked) {
@@ -463,6 +462,11 @@ const startApp = () => {
             document.querySelectorAll('.new-node-area').forEach(e => e.classList.remove('visible'));
         }
     });
+
+    $optionMaxTreeDepth.addEventListener('change', () => {
+        maxTreeDepth = parseInt($optionMaxTreeDepth.value);
+        renderTreeGraphic(binaryTreeRoot);
+    })
 
     /**
      * Event Listeners
@@ -481,7 +485,7 @@ const startApp = () => {
     });
 
     $randomTreeButton.addEventListener('click', () => {
-        binaryTreeRoot = randomBinaryTree(MAX_DEPTH_LIMIT, valueGenerator); // max depth limit
+        binaryTreeRoot = randomBinaryTree(maxTreeDepth, valueGenerator); // max depth limit
         updateTreeArray(binaryTreeRoot);
         renderTreeGraphic(binaryTreeRoot);
     });
@@ -530,10 +534,8 @@ const startApp = () => {
     // Redraw diagram when user resizes window.
     let throttled = false;
     let delay = 250; // milliseconds
-    console.log({window})
     window.addEventListener('resize', () => {
         if (!throttled) {
-            console.log('resize')
             renderTreeGraphic(binaryTreeRoot);
             throttled = true;
             setTimeout(() => {
@@ -541,6 +543,10 @@ const startApp = () => {
             }, delay);
         }
     });
+
+    // TREE DATA GLOBAL VARIABLE
+    let binaryTreeRoot = null;
+    let maxTreeDepth = parseInt($optionMaxTreeDepth.value);
 
     // Set default treeArrayInput value.
     $treeArrayInput.innerText = '[4,8,15,16,23,null,42]';

@@ -2,9 +2,10 @@
 :root {
     --app-black:  #222;
     --app-white: #FFF;
-    --app-gray: #CCC;
+    --app-gray: #BBB;
     --app-background: #EEE;
     --app-background-dark: #DDD;
+    --app-yellow: #fcde9e;
     --app-green: #199688;
     --app-green-dark: #127a6b;
     --app-blue: #34a9f4;
@@ -21,6 +22,7 @@ body {
     margin: auto;
     height: 100vh;
     width: 90vw;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,6 +31,7 @@ body {
 }
 
 #tree-array-input,
+.edit-value-input,
 #svg-container,
 #error-message {
     font-family: 'Monaco', 'Lucida Console', 'Courier New', Courier, monospace;
@@ -57,20 +60,26 @@ button { /* change default button styles */
     justify-content: flex-start;
     font-size: 20px;
     border-radius: 0px 0px 5px 5px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
-
 .page-top-item {
     text-decoration: none;
     display: flex;
     flex-direction: column;
+    flex-wrap: nowrap;
     justify-content: center;
     color: var(--app-white);
     padding: 0px 10px;
 }
-.page-top-item.push-right {
+.page-top-item.slogan {
+    flex-shrink: 0;
+    color: var(--app-gray);
+}
+.page-top-item.icon {
     margin-left: auto;
 }
-.page-top-item.push-right:hover{
+.page-top-item.icon:hover{
     filter: brightness(0) saturate(100%) invert(36%)
             sepia(89%) saturate(1937%) hue-rotate(149deg)
             brightness(92%) contrast(80%);
@@ -113,6 +122,7 @@ button { /* change default button styles */
 
 /********** COLLAPSIBLE CONTAINERS **********/
 .collapsible {
+    text-align: center;
     width: 100%;
     display: none;
     background-color: var(--app-background-dark);
@@ -129,6 +139,7 @@ button { /* change default button styles */
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+    justify-content: center;
     gap: 5px;
 }
 
@@ -168,9 +179,14 @@ button { /* change default button styles */
     display: flex;
     flex-direction: row;
     align-items: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
+    padding: 0;
     margin-bottom: 10px;
+}
+fieldset {
+    text-align: left;
 }
 legend {
     padding: 5px;
@@ -217,7 +233,8 @@ legend {
     background-color: var(--app-white);
     border: 1px solid var(--app-black);
     display: block;
-    overflow: auto;
+    overflow-x: auto; /* add horizontal scrollbar if array too long */
+    white-space: nowrap;
     min-width: 500px;
     min-width: min(500px, 100%);
     max-width: 100%;
@@ -249,9 +266,8 @@ legend {
     background:  var(--app-green-dark);
 }
 
-#random-tree:hover,
-#random-tree:focus{
-    background: linear-gradient(-45deg, /* skew gradient */
+#random-tree:hover {
+    background: linear-gradient(-60deg, /* skew gradient */
         rgba(255,0,0,1) 0%,
         rgba(255,154,0,1) 10%,
         rgba(208,222,33,1) 20%,
@@ -310,7 +326,6 @@ legend {
 }
 .node-val {
     pointer-events: none;
-    stroke: var(--app-white);
     fill: var(--app-white);
     font-size: 20px;
 }
@@ -331,7 +346,7 @@ legend {
     opacity: 1;
 }
 .new-node-boundary {
-    opacity: 0; /* set to a non-zero value to see 'hitbox' of new node */
+    opacity: 0;
 }
 .new-node {
     pointer-events: none;
