@@ -2,9 +2,9 @@
  * Wrapper function for single-page app.
  */
 const startApp = () => {
-	/**
-	 * Defininition for binary tree node.
-	 */
+    /**
+     * Defininition for binary tree node.
+     */
     class TreeNode {
         constructor(val, left, right) {
             this.val = val === undefined ? 0 : val;
@@ -72,13 +72,13 @@ const startApp = () => {
         }
     }
 
-	/**
-	 * This function transforms the user input into a binary tree.
-	 * There is basic invalid input error handing. Inputs which cannot
-	 * be JSON-parsed will cause the error message to be displayed.
-	 * @param {String} arrString - The user input array.
-	 * @returns {TreeNode} - The root of the binary tree.
-	 */
+    /**
+     * This function transforms the user input into a binary tree.
+     * There is basic invalid input error handing. Inputs which cannot
+     * be JSON-parsed will cause the error message to be displayed.
+     * @param {String} arrString - The user input array.
+     * @returns {TreeNode} - The root of the binary tree.
+     */
     const buildTreeFromArrString = (arrString) => {
         $alertContainer.classList.remove("active");
 
@@ -99,7 +99,7 @@ const startApp = () => {
             return binaryTreeRoot; // no changes made
         }
 
-		/* BFS algorithm to create Tree Object*/
+        /* BFS algorithm to create Tree Object*/
         const root = new TreeNode(arr.shift());
         const queue = [root];
         while (queue.length > 0 && arr.length > 0) {
@@ -119,13 +119,13 @@ const startApp = () => {
         return root;
     };
 
-	/**
-	 * This function is called when the user modifies the binary tree
-	 * with clicks in the diagram. The input field is updated to
-	 * reflect the currently displayed tree.
-	 * @param {TreeNode} root - The binary tree root.
-	 * @returns
-	 */
+    /**
+     * This function is called when the user modifies the binary tree
+     * with clicks in the diagram. The input field is updated to
+     * reflect the currently displayed tree.
+     * @param {TreeNode} root - The binary tree root.
+     * @returns
+     */
     const updateTreeArray = (root) => {
         $alertContainer.classList.remove("active");
         if (root === null) {
@@ -153,7 +153,7 @@ const startApp = () => {
             }
         }
 
-		/* trim nulls off the end of the array */
+        /* trim nulls off the end of the array */
         while (arr[arr.length - 1] === null) arr.pop();
 
         /* update input field, trigger animation */
@@ -168,11 +168,11 @@ const startApp = () => {
         }
     };
 
-	/**
-	 * This function draws the SVG elements to create the binary tree graphic.
-	 * @param {TreeNode} root 
-	 * @returns 
-	 */
+    /**
+     * This function draws the SVG elements to create the binary tree graphic.
+     * @param {TreeNode} root
+     * @returns
+     */
     const renderTreeGraphic = (root) => {
         /* Clear contents of display before re-drawing */
         const displaySVG = d3.select("#svg-display");
@@ -191,13 +191,13 @@ const startApp = () => {
             return;
         }
 
-		/**
-		 * Calculate the horizontal offset (dx) of child nodes at each depth of the tree.
-		 * The value of dx is dependent on:
-		 * 1) The depth of the node, (i + 1)
-		 * 2) The minimum distance between sibling nodes, MIN_HORIZ_DIST
-		 * 3) The maximum allowable depth of the tree, maxTreeDepth
-		 */
+        /**
+         * Calculate the horizontal offset (dx) of child nodes at each depth of the tree.
+         * The value of dx is dependent on:
+         * 1) The depth of the node, (i + 1)
+         * 2) The minimum distance between sibling nodes, MIN_HORIZ_DIST
+         * 3) The maximum allowable depth of the tree, maxTreeDepth
+         */
         const dxAtDepth = new Array(treeDepth).fill().map((_, i) => {
             let dx =
                 minNodeSpacing *
@@ -208,16 +208,16 @@ const startApp = () => {
         });
 
         /* BFS traverse through tree and draw SVG elements */
-        const queue = [[root, 1, displayCenter, 75, '']]; // [node, depth, x-position, y-position, pathID]
+        const queue = [[root, 1, displayCenter, 75, ""]]; // [node, depth, x-position, y-position, pathID]
         while (queue.length > 0) {
             const [node, depth, x, y, pathID] = queue.shift();
             const dx = dxAtDepth[depth - 1]; // horizontal offset of child nodes.
 
-			/**
-			 * If there is a child node, add it to the queue.
-			 * If there is no child node, draw an area below
-			 * which can be clicked to add a new node.
-			 */
+            /**
+             * If there is a child node, add it to the queue.
+             * If there is no child node, draw an area below
+             * which can be clicked to add a new node.
+             */
             if (node.left) {
                 drawNodeBranchSVG(treeSVG, x, y, x - dx, y + dy);
                 queue.push([
@@ -228,7 +228,7 @@ const startApp = () => {
                     pathID + "l",
                 ]);
             } else if (pathID.length + 1 < maxTreeDepth) {
-                drawNewNodeAreaSVG(treeSVG, x, y, x - dx, y + dy, pathID + 'l');
+                drawNewNodeAreaSVG(treeSVG, x, y, x - dx, y + dy, pathID + "l");
             }
             if (node.right) {
                 drawNodeBranchSVG(treeSVG, x, y, x + dx, y + dy);
@@ -243,16 +243,16 @@ const startApp = () => {
                 drawNewNodeAreaSVG(treeSVG, x, y, x + dx, y + dy, pathID + "r");
             }
 
-			/* Leaf nodes will be colored differently */
+            /* Leaf nodes will be colored differently */
             let nodeClasses =
                 "node" + (!node.left && !node.right ? " leaf" : "");
-			
-			/* Draw the node and its value */
+
+            /* Draw the node and its value */
             drawNodeCircleSVG(treeSVG, x, y, nodeClasses, pathID);
             drawNodeValueSVG(treeSVG, x, y, node.val);
         }
 
-		/* Center and scale the tree */
+        /* Center and scale the tree */
         transformTreeSVG(treeSVG, displaySVG);
 
         /* User can click the new node area to insert a node in the tree */
@@ -263,7 +263,7 @@ const startApp = () => {
             renderTreeGraphic(binaryTreeRoot);
         });
 
-		/* User can click the node to edit its value, or right-click to delete */
+        /* User can click the node to edit its value, or right-click to delete */
         d3.selectAll(".node").on("mouseup", (e) => {
             if (e.which === 1) {
                 drawEditNodeValueField(e.target);
@@ -281,12 +281,12 @@ const startApp = () => {
         });
     };
 
-	/**
-	 * Draw the empty tree message.
-	 * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
-	 * @param {Number} x - X position of message.
-	 * @param {Number} y - Y position of message.
-	 */
+    /**
+     * Draw the empty tree message.
+     * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
+     * @param {Number} x - X position of message.
+     * @param {Number} y - Y position of message.
+     */
     const drawEmptyTree = (svg, x, y) => {
         const group = svg.append("g").attr("class", "empty-tree-message-group");
         group
@@ -305,21 +305,21 @@ const startApp = () => {
             .attr("dy", "7") // y offset text
             .text("click to add root node");
         group.on("click", () => {
-			/* The value will be random or fixed, depending on the option selected */
+            /* The value will be random or fixed, depending on the option selected */
             binaryTreeRoot = new TreeNode(valueGenerator());
             updateTreeArray(binaryTreeRoot);
             renderTreeGraphic(binaryTreeRoot);
         });
     };
 
-	/**
-	 * Draw the node circle.
-	 * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
-	 * @param {Number} x - The X center of the circle.
-	 * @param {Number} y - The Y center of the circle.
-	 * @param {String} nodeClasses - The classes to add to the 
-	 * @param {*} pathID  - 
-	 */
+    /**
+     * Draw the node circle.
+     * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
+     * @param {Number} x - The X center of the circle.
+     * @param {Number} y - The Y center of the circle.
+     * @param {String} nodeClasses - The classes to add to the
+     * @param {*} pathID  -
+     */
     const drawNodeCircleSVG = (svg, x, y, nodeClasses, pathID) => {
         if ($optionColoredLeafs.checked) nodeClasses += " colored";
         svg.append("circle")
@@ -330,13 +330,13 @@ const startApp = () => {
             .attr("cy", y);
     };
 
-	/**
-	 * Draw the node value.
-	 * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
-	 * @param {Number} x - The X center of the text.
-	 * @param {Number} y - The y center of the text.
-	 * @param {*} val - The value of the node to draw.
-	 */
+    /**
+     * Draw the node value.
+     * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
+     * @param {Number} x - The X center of the text.
+     * @param {Number} y - The y center of the text.
+     * @param {*} val - The value of the node to draw.
+     */
     const drawNodeValueSVG = (svg, x, y, val) => {
         svg.append("text")
             .attr("class", "node-val")
@@ -347,14 +347,14 @@ const startApp = () => {
             .text(val);
     };
 
-	/**
-	 * Draw the branch between nodes.
-	 * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
-	 * @param {Number} x1 - The X start of the branch.
-	 * @param {Number} y1 - The Y start of the branch.
-	 * @param {Number} x2 - The X end of the branch.
-	 * @param {Number} y2 - The Y end of the branch.
-	 */
+    /**
+     * Draw the branch between nodes.
+     * @param {SVGElement} svg - The SVG <g> element which we will draw inside.
+     * @param {Number} x1 - The X start of the branch.
+     * @param {Number} y1 - The Y start of the branch.
+     * @param {Number} x2 - The X end of the branch.
+     * @param {Number} y2 - The Y end of the branch.
+     */
     const drawNodeBranchSVG = (svg, x1, y1, x2, y2) => {
         svg.append("line")
             .attr("class", "branch")
@@ -364,56 +364,57 @@ const startApp = () => {
             .attr("y2", y2);
     };
 
-	/**
-	 * Draw the new node area, which is bounded by another <g> element.
-	 * @param {SVGElement} svg 
-	 * @param {Number} x1 
-	 * @param {Number} y1 
-	 * @param {Number} x2 
-	 * @param {Number} y2 
-	 * @param {String} id 
-	 */
+    /**
+     * Draw the new node area, which is bounded by another <g> element.
+     * @param {SVGElement} svg
+     * @param {Number} x1
+     * @param {Number} y1
+     * @param {Number} x2
+     * @param {Number} y2
+     * @param {String} id
+     */
     const drawNewNodeAreaSVG = (svg, x1, y1, x2, y2, id) => {
-        const group = svg
-            .append("g")
-            .attr(
-                "class",
-                $optionShowAddNode.checked // user option
-                    ? "new-node-area visible"
-                    : "new-node-area"
-            );
+        const group = svg.append("g").attr(
+            "class",
+            $optionShowAddNode.checked // user option
+                ? "new-node-area visible"
+                : "new-node-area"
+        );
 
         let x = Math.min(x1, x2);
         if (x1 > x2) x -= 20;
         let width = Math.abs(x1 - x2) + 20;
 
-		/* Draw a rectangle which will be transparent,
+        /* Draw a rectangle which will be transparent,
 		but when clicked inside will trigger the event handlers */
-        group.append("rect")
+        group
+            .append("rect")
             .attr("class", "new-node-boundary")
             .attr("id", id)
             .attr("x", x)
             .attr("y", y1)
             .attr("width", width)
             .attr("height", y2 - y1 + 20);
-        group.append("line")
+        group
+            .append("line")
             .attr("class", "branch new-branch")
             .attr("x1", x1)
             .attr("y1", y1)
             .attr("x2", x2)
             .attr("y2", y2);
-        group.append("circle")
+        group
+            .append("circle")
             .attr("class", "node new-node")
             .attr("r", 20)
             .attr("cx", x2)
             .attr("cy", y2);
     };
 
-	/**
-	 * Draw the input element so user can edit node values in the diagram.
-	 * It will be positioned on top of the node.
-	 * @param {EventTarget} target - The event target of the node clicked.
-	 */
+    /**
+     * Draw the input element so user can edit node values in the diagram.
+     * It will be positioned on top of the node.
+     * @param {EventTarget} target - The event target of the node clicked.
+     */
     const drawEditNodeValueField = (target) => {
         const rect = target.getBoundingClientRect();
         const inputContainer = d3
@@ -437,7 +438,7 @@ const startApp = () => {
         input.node().select();
 
         /**
-		 * User presses enter -> update node value.
+         * User presses enter -> update node value.
          * User presses escape -> node value is NOT updated.
          */
         let userEscaped = false;
@@ -449,7 +450,7 @@ const startApp = () => {
                 input.node().blur();
             }
         });
-		/* User clicks outside of field -> update node value */
+        /* User clicks outside of field -> update node value */
         input.on("blur", () => {
             let newValue = userEscaped ? currValue : input.node().value;
             /* parse the new value as a number, if it can be */
@@ -463,12 +464,12 @@ const startApp = () => {
         });
     };
 
-	/**
-	 * This function scales the tree when it is too large to fit on the screen.
-	 * It also moves the tree horizontally so it is centered on the page.
-	 * @param {SVGElement} tree - The <g> inside the <svg> element.
-	 * @param {SVGElement} display  The <svg> element.
-	 */
+    /**
+     * This function scales the tree when it is too large to fit on the screen.
+     * It also moves the tree horizontally so it is centered on the page.
+     * @param {SVGElement} tree - The <g> inside the <svg> element.
+     * @param {SVGElement} display  The <svg> element.
+     */
     const transformTreeSVG = (tree, display) => {
         let treeRect = tree.node().getBoundingClientRect();
         const displayRect = display.node().getBoundingClientRect();
@@ -492,12 +493,12 @@ const startApp = () => {
         );
     };
 
-	/**
-	 * Generate a random binary tree. The values will be generated by the
-	 * callback function.
-	 * @param {*} callback - Value generator function.
-	 * @returns {TreeNode} - Root of binary tree.
-	 */
+    /**
+     * Generate a random binary tree. The values will be generated by the
+     * callback function.
+     * @param {*} callback - Value generator function.
+     * @returns {TreeNode} - Root of binary tree.
+     */
     const randomBinaryTree = (callback) => {
         const root = new TreeNode(callback());
         const rootCopy = root;
@@ -523,13 +524,13 @@ const startApp = () => {
         return rootCopy;
     };
 
-	/**
-	 * Returns a value based on the currently selected
-	 * 'New Node Value' option in the options menu.
-	 * @returns {String|Number} - The random (or fixed) value.
-	 */
+    /**
+     * Returns a value based on the currently selected
+     * 'New Node Value' option in the options menu.
+     * @returns {String|Number} - The random (or fixed) value.
+     */
     const valueGenerator = () => {
-		/* Radio button selection in options menu */
+        /* Radio button selection in options menu */
         const radio = document.querySelector(
             'input[name="new-node-choice"]:checked'
         ).value;
@@ -542,11 +543,10 @@ const startApp = () => {
         }
     };
 
-
-	/**
-	 * Add the <svg> element the <g> element to the DOM.
-	 * Using DS.js library to manipulate SVG elements in the DOM. (https://d3js.org/)
-	 */
+    /**
+     * Add the <svg> element the <g> element to the DOM.
+     * Using DS.js library to manipulate SVG elements in the DOM. (https://d3js.org/)
+     */
     d3.select("#svg-container")
         .append("svg")
         .attr("id", "svg-display")
@@ -574,25 +574,33 @@ const startApp = () => {
     const $optionColoredLeafs = document.getElementById("option-colored-leafs");
     const $optionShowAddNode = document.getElementById("option-show-add-node");
     const $optionMaxTreeDepth = document.getElementById("max-tree-depth");
-    const $optionLeftChildProb = document.getElementById("left-child-probability");
-    const $optionRightChildProb = document.getElementById("right-child-probability");
+    const $optionLeftChildProb = document.getElementById(
+        "left-child-probability"
+    );
+    const $optionRightChildProb = document.getElementById(
+        "right-child-probability"
+    );
 
-	/* Event Listeners for changing options */
+    /* Event Listeners for changing options */
     $optionColoredLeafs.addEventListener("change", () => {
         if ($optionColoredLeafs.checked) {
-            document.querySelectorAll(".leaf")
+            document
+                .querySelectorAll(".leaf")
                 .forEach((e) => e.classList.add("colored"));
         } else {
-            document.querySelectorAll(".leaf")
+            document
+                .querySelectorAll(".leaf")
                 .forEach((e) => e.classList.remove("colored"));
         }
     });
     $optionShowAddNode.addEventListener("change", () => {
         if ($optionShowAddNode.checked) {
-            document.querySelectorAll(".new-node-area")
+            document
+                .querySelectorAll(".new-node-area")
                 .forEach((e) => e.classList.add("visible"));
         } else {
-            document.querySelectorAll(".new-node-area")
+            document
+                .querySelectorAll(".new-node-area")
                 .forEach((e) => e.classList.remove("visible"));
         }
     });
@@ -620,7 +628,7 @@ const startApp = () => {
         renderTreeGraphic(binaryTreeRoot);
     });
 
-	/* Toggle 'active' class of menuItems, 'expand more' icons, and collapsible containers.
+    /* Toggle 'active' class of menuItems, 'expand more' icons, and collapsible containers.
 	Only one menu can be active at a time. */
     $menuItems.forEach(($menuItem, i) => {
         $menuItem.addEventListener("click", () => {
@@ -642,7 +650,7 @@ const startApp = () => {
         });
     });
 
-	/* Example trees to visualize different traversal methods */
+    /* Example trees to visualize different traversal methods */
     const exampleTrees = [
         { name: "null", serializedArray: "[]" },
         {
@@ -693,12 +701,12 @@ const startApp = () => {
     });
 
     /* GLOBAL VARIABLES */
-	const minNodeSpacing = 50; // Pixel distance (x) between nodes at the bottom of the tree.
-	const dy = 100; // Pixel distance (y) between each level of the tree.
+    const minNodeSpacing = 50; // Pixel distance (x) between nodes at the bottom of the tree.
+    const dy = 100; // Pixel distance (y) between each level of the tree.
     let binaryTreeRoot = null; // The variable that stores the binary tree is is rendered.
     let maxTreeDepth = parseInt($optionMaxTreeDepth.value); // User-controlled maximum depth of binary tree.
 
-	/* Set the default tree when the page loads. */
+    /* Set the default tree when the page loads. */
     $treeArrayInput.innerText = "[4,8,15,16,23,null,42]";
     binaryTreeRoot = buildTreeFromArrString($treeArrayInput.innerText);
     renderTreeGraphic(binaryTreeRoot);
