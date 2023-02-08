@@ -214,6 +214,7 @@ legend {
     color: var(--app-red-dark);
     border-radius: 5px;
     padding: 10px 10px;
+    margin-top: 10px;
     box-sizing: border-box;
 }
 #alert-container.active {
