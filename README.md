@@ -1,5 +1,7 @@
 # BinaryTreeBuilder
 
+Live here: https://scotthallock.github.io/binarytreebuilder/
+
 BinaryTreeBuilder is a tool which simplifies the creation of binary tree test cases for LeetCode. Build your tree with mouse clicks in the diagram or by inputting an array.
 
 The tree diagram and tree array are updated together!
